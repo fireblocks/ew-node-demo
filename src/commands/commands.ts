@@ -9,6 +9,7 @@ export async function execute(cb: () => Promise<any>) {
   try {
     const result = await cb();
     logResult(result);
+    return result;
   } catch (error) {
     logError(error);
   }

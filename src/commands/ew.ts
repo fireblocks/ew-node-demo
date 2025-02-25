@@ -17,6 +17,7 @@ import { input, inputAny } from "./utils";
 import { state } from "../app";
 import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
 
+export let walletId: string | null = null;
 export let ew: EmbeddedWallet | null = null;
 export const Commands: Record<string, Function> = {
   ["Initialize Core"]: initCore,
@@ -53,7 +54,7 @@ export async function initEw() {
   }
   ew = new EmbeddedWallet({
     env: process.env.ENV as TEnv,
-    logger: ConsoleLoggerFactory(),
+    // logger: ConsoleLoggerFactory(),
     authClientId: process.env.AUTH_CLIENT_ID,
     authTokenRetriever: {
       getAuthToken: getToken,
@@ -65,7 +66,8 @@ export async function initEw() {
 }
 
 async function assignWallet() {
-  return execute(() => ew.assignWallet());
+  const result = await execute(() => ew.assignWallet());
+  walletId = result.walletId;
 }
 async function getAccounts() {
   return execute(() => ew.getAccounts());
@@ -141,7 +143,7 @@ async function createWeb3Connection() {
   const uri = await inputAny("uri");
   return execute(() =>
     ew.createWeb3Connection({
-      feeLevel: "LOW" as any,
+      feeLevel: "MEDIUM" as any,
       ncwAccountId: accountId,
       uri,
     })
@@ -280,7 +282,7 @@ async function promptDestination(): Promise<DestinationTransferPeerPath> {
       break;
     case "END_USER_WALLET":
       const destWalletId = await inputAny("Destination Wallet ID");
-      const destAccountId = await inputAny("Destination Account ID");
+      const destAccountId = await inputAny("Destination Account ID", "0");
       destination = {
         type: "END_USER_WALLET",
         walletId: destWalletId,

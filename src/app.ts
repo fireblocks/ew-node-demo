@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { Commands as BaseCommands } from "./commands/commands";
-import { Commands as EWCommands } from "./commands/ew";
+import { Commands as EWCommands, walletId } from "./commands/ew";
 import { Commands as CoreCommands } from "./commands/core";
 
 export const state = {
@@ -16,6 +16,9 @@ async function main() {
   while (!exit) {
     const choices = getChoices();
 
+    if (walletId) {
+      console.log(chalk.bold.cyan(`Wallet ID: ${walletId}`));
+    }
     const { command } = await inquirer.prompt([
       {
         type: "list",
