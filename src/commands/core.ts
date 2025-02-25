@@ -1,7 +1,7 @@
 import { getFireblocksNCWInstance } from "@fireblocks/ncw-js-sdk";
 import { getDeviceId } from "../utils/utils";
 import inquirer from "inquirer";
-import { inputAny } from "./utils";
+import { inputAny } from "../utils/prompt-utils";
 import chalk from "chalk";
 import { execute } from "./commands";
 

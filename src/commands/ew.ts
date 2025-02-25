@@ -13,7 +13,7 @@ import {
   FileSystemSecureStorageProvider,
 } from "../utils/sdk-storage";
 import { getDeviceId } from "../utils/utils";
-import { input, inputAny } from "./utils";
+import { input, inputAny } from "../utils/prompt-utils";
 import { state } from "../app";
 import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
 

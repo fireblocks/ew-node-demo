@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import { getDeviceId } from "../utils/utils";
+import { getDeviceId } from "./utils";
 
 type TUserInput = "accountId" | "assetId" | "deviceId";
 
