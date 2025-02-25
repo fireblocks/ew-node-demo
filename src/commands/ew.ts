@@ -59,7 +59,6 @@ export async function initEw() {
     reporting: { enabled: false },
   });
   state.initEW = true;
-  console.log("EW initialized");
 }
 
 async function assignWallet() {
@@ -191,8 +190,6 @@ async function initCore() {
         "storage/secure"
       ),
     });
-
-    console.log("Core initialized");
   }
   state.initCore = true;
   coreDeviceId = deviceId;

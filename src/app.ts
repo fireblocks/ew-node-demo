@@ -17,14 +17,13 @@ async function main() {
   while (!shouldExit) {
     const choices = getChoices();
 
-    displaySessionDetails();
     const { command } = await inquirer.prompt([
       {
         type: "list",
         name: "command",
-        message: "Choose a command to execute:",
+        message: getSessionDetails(),
         choices,
-        pageSize: 40,
+        pageSize: 30,
       },
     ]);
 
@@ -104,14 +103,14 @@ process.on("uncaughtException", (error) => {
     throw error;
   }
 });
-function displaySessionDetails() {
-  console.log(
-    chalk.yellow(
-      "\n================================================================================\n",
-      "Session details:\n",
-      `Wallet ID:      ${walletId ?? "???"}\n`,
-      `Core Device ID: ${coreDeviceId ?? "???"}`,
-      "\n================================================================================\n"
-    )
+function getSessionDetails(): string {
+  const yellowBlueLine = (chalk.yellow("==") + chalk.blue("==")).repeat(15);
+  return chalk.bold.yellow(
+    `\n${yellowBlueLine}\n`,
+    " ".repeat(20),
+    chalk.italic.bgBlue("Session details\n"),
+    `Wallet ID:        ${walletId ?? "___"}\n`,
+    `Core Device ID:   ${coreDeviceId ?? "___"}`,
+    `\n${yellowBlueLine}\n`
   );
 }
