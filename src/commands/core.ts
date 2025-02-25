@@ -42,6 +42,7 @@ export async function generateMPCKeys() {
       name: "algos",
       message: "Select algorithms",
       choices: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
+      default: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
     },
   ]);
   return execute(() => instance.generateMPCKeys(new Set(algos)));
@@ -70,14 +71,23 @@ export async function getInProgressSigningTxId() {
 
 export async function backupKeys() {
   const instance = await getCoreInstance();
-  const passphrase = await inputAny("passphrase");
-  const passphraseId = await inputAny("passphrase ID (uuid)");
+  const passphrase = await inputAny(
+    "passphrase",
+    process.env.DEFAULT_PASSPHRASE
+  );
+  const passphraseId = await inputAny(
+    "passphrase ID (uuid)",
+    process.env.DEFAULT_PASSPHRASE_ID
+  );
   return execute(() => instance.backupKeys(passphrase, passphraseId));
 }
 
 export async function recoverKeys() {
   const instance = await getCoreInstance();
-  const passphrase = await inputAny("passphrase");
+  const passphrase = await inputAny(
+    "passphrase",
+    process.env.DEFAULT_PASSPHRASE
+  );
   return execute(() => instance.recoverKeys(() => Promise.resolve(passphrase)));
 }
 
