@@ -43,7 +43,7 @@ function getChoices() {
     state.initEW && Object.keys(EWCommands).length
       ? [
           new inquirer.Separator(
-            chalk.bold.cyan("========== EW Commands ==========")
+            chalk.bold.yellow("========== EW Commands ==========")
           ),
           ...Object.keys(EWCommands),
         ]
@@ -52,7 +52,7 @@ function getChoices() {
     state.initCore && Object.keys(CoreCommands).length
       ? [
           new inquirer.Separator(
-            chalk.bold.cyan("========== Core Commands ==========")
+            chalk.bold.yellow("========== Core Commands ==========")
           ),
           ...Object.keys(CoreCommands),
         ]
@@ -62,7 +62,7 @@ function getChoices() {
     ...ewChoices,
     ...coreChoices,
     new inquirer.Separator(),
-    "EXIT",
+    chalk.italic("EXIT"),
   ];
 }
 

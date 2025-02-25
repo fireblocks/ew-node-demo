@@ -29,6 +29,7 @@ export const Commands: Record<string, Function> = {
   ["Get Asset"]: getAsset,
   ["Get Assets"]: getAssets,
   ["Get Balance"]: getBalance,
+  ["Refresh Balance"]: refreshBalance,
   ["Get Device"]: getDevice,
   ["Get Latest Backup"]: getLatestBackup,
   ["Get NFT"]: getNFT,
@@ -89,6 +90,11 @@ async function getAsset() {
 async function getBalance() {
   const { accountId, assetId } = await input("accountId", "assetId");
   return execute(() => ew.getBalance(accountId, assetId));
+}
+
+async function refreshBalance() {
+  const { accountId, assetId } = await input("accountId", "assetId");
+  return execute(() => ew.refreshBalance(accountId, assetId));
 }
 
 async function getDevice() {
