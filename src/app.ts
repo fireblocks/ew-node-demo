@@ -22,6 +22,7 @@ async function main() {
         name: "command",
         message: "Choose a command to execute:",
         choices,
+        pageSize: 40,
       },
     ]);
 
