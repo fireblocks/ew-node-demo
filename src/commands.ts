@@ -2,7 +2,6 @@ import { EmbeddedWallet } from "@fireblocks/embedded-wallet-sdk";
 import {
   ConsoleLoggerFactory,
   getFireblocksNCWInstance,
-  IFireblocksNCW,
   TEnv,
 } from "@fireblocks/ncw-js-sdk";
 import { getToken } from "./utils/firebase-auth";
@@ -12,29 +11,33 @@ import {
   FileSystemSecureStorageProvider,
   FileSystemStorageProvider,
 } from "./utils/sdk-storage";
+
 let ew: EmbeddedWallet | null = null;
 
-const env = process.env;
-export const commands: Record<string, Function> = {};
+export const Commands: Record<string, Function> = {
+  "Init Embedded Wallet": initEw,
+  "Init Core": initCore,
+};
 
-commands["Init EW"] = async () => {
+async function initEw() {
   if (ew) {
     console.log("EW already initialized");
     return;
   }
   ew = new EmbeddedWallet({
-    env: env.ENV as TEnv,
+    env: process.env.ENV as TEnv,
     logger: ConsoleLoggerFactory(),
-    authClientId: env.AUTH_CLIENT_ID,
+    authClientId: process.env.AUTH_CLIENT_ID,
     authTokenRetriever: {
       getAuthToken: getToken,
     },
     reporting: { enabled: false },
   });
+  initEwCommands();
   console.log("EW initialized");
-};
+}
 
-commands["init core"] = async () => {
+async function initCore() {
   const { deviceId } = await inquirer.prompt([
     {
       type: "input",
@@ -59,4 +62,8 @@ commands["init core"] = async () => {
     ),
   });
   console.log("Core initialized");
-};
+}
+
+function initEwCommands() {
+  Commands["EW: Assign Wallet"] = ew.assignWallet;
+}

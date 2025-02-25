@@ -5,7 +5,7 @@ import crypto from "crypto";
 const filePath = "storage/DEVICE_ID.txt";
 const dirPath = path.dirname(filePath);
 
-export function getDeviceId(overrideDeviceId?: string) {
+export function getDeviceId(overrideDeviceId?: string, failOnEmpty = false) {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
@@ -16,6 +16,9 @@ export function getDeviceId(overrideDeviceId?: string) {
   }
 
   if (!fs.existsSync(filePath) || fs.readFileSync(filePath, "utf-8") === "") {
+    if (failOnEmpty) {
+      throw new Error("Device ID not found");
+    }
     const newDeviceId = crypto.randomUUID();
     fs.writeFileSync(filePath, newDeviceId);
     console.log("New deviceId generated and saved: " + newDeviceId);

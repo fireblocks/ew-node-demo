@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
-import { commands } from "./commands";
+import { Commands } from "./commands";
 
 async function main() {
   let exit = false;
@@ -11,14 +11,14 @@ async function main() {
         type: "list",
         name: "command",
         message: "Choose a command to execute:",
-        choices: [...Object.keys(commands), chalk.red("EXIT")],
+        choices: [...Object.keys(Commands), chalk.red("EXIT")],
       },
     ]);
 
     if (command === chalk.red("exit")) {
       exit = true;
     } else {
-      await commands[command]();
+      await Commands[command]();
     }
   }
 }
