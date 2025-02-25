@@ -18,6 +18,7 @@
     "inquirer": "^12.4.2"
   },
   "devDependencies": {
+    "@fireblocks/ts-sdk": "^8.1.0",
     "ts-node": "^10.0.0",
     "typescript": "^5.7.3"
   },

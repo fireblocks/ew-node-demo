@@ -1,5 +1,9 @@
 import { EmbeddedWallet } from "@fireblocks/embedded-wallet-sdk";
-import { getFireblocksNCWInstance, TEnv } from "@fireblocks/ncw-js-sdk";
+import {
+  ConsoleLoggerFactory,
+  getFireblocksNCWInstance,
+  TEnv,
+} from "@fireblocks/ncw-js-sdk";
 import inquirer from "inquirer";
 import { getToken } from "../utils/firebase-auth";
 import { execute } from "./commands";
@@ -11,6 +15,7 @@ import {
 import { getDeviceId } from "../utils/utils";
 import { input, inputAny } from "./utils";
 import { state } from "../app";
+import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
 
 export let ew: EmbeddedWallet | null = null;
 export const Commands: Record<string, Function> = {
@@ -30,6 +35,15 @@ export const Commands: Record<string, Function> = {
   ["List Owned Collections"]: listOwnedCollections,
   ["List Owned Assets"]: listOwnedAssets,
   ["Get Supported Assets"]: getSupportedAssets,
+  ["Get Web3 Connections"]: getWeb3Connections,
+  ["Create Web3 Connection"]: createWeb3Connection,
+  ["Submit Web3 Connection"]: submitWeb3Connection,
+  ["Remove Web3 Connection"]: removeWeb3Connection,
+  ["Create Transaction"]: createTransaction,
+  ["Estimate Transaction Fee"]: estimateTransactionFee,
+  ["Get Transaction By ID"]: getTransaction,
+  ["Get Transactions"]: getTransactions,
+  ["Cancel Transaction"]: cancelTransaction,
 };
 
 export async function initEw() {
@@ -39,7 +53,7 @@ export async function initEw() {
   }
   ew = new EmbeddedWallet({
     env: process.env.ENV as TEnv,
-    // logger: ConsoleLoggerFactory(),
+    logger: ConsoleLoggerFactory(),
     authClientId: process.env.AUTH_CLIENT_ID,
     authTokenRetriever: {
       getAuthToken: getToken,
@@ -85,7 +99,7 @@ async function getLatestBackup() {
 }
 
 async function getNFT() {
-  const id = inputAny("NFT ID");
+  const id = await inputAny("NFT ID");
   return execute(() => ew.getNFT(id));
 }
 async function getOwnedNFTs() {
@@ -118,6 +132,38 @@ async function addAsset() {
   return execute(() => ew.addAsset(Number(accountId), assetId));
 }
 
+async function getWeb3Connections() {
+  return execute(() => ew.getWeb3Connections());
+}
+
+async function createWeb3Connection() {
+  const { accountId } = await input("accountId");
+  const uri = await inputAny("uri");
+  return execute(() =>
+    ew.createWeb3Connection({
+      feeLevel: "LOW" as any,
+      ncwAccountId: accountId,
+      uri,
+    })
+  );
+}
+
+async function submitWeb3Connection() {
+  const connectionId = await inputAny("connectionId");
+  const approve = await inquirer.prompt({
+    type: "confirm",
+    name: "approve",
+    message: "Approve connection?",
+  });
+
+  return execute(() => ew.submitWeb3Connection(connectionId, approve));
+}
+
+async function removeWeb3Connection() {
+  const connectionId = await inputAny("connectionId");
+  return execute(() => ew.removeWeb3Connection(connectionId));
+}
+
 async function initCore() {
   const { deviceId } = await inquirer.prompt([
     {
@@ -147,4 +193,107 @@ async function initCore() {
     console.log("Core initialized");
   }
   state.initCore = true;
+}
+
+async function getTransaction() {
+  const txId = await inputAny("txId");
+  return execute(() => ew.getTransaction(txId));
+}
+
+async function cancelTransaction() {
+  const txId = await inputAny("txId");
+  return execute(() => ew.cancelTransaction(txId));
+}
+
+async function estimateTransactionFee() {
+  const { accountId, assetId } = await input("accountId", "assetId");
+  const amount = await inputAny("amount");
+  const destination = await promptDestination();
+  return execute(() =>
+    ew.estimateTransactionFee({
+      assetId,
+      source: {
+        id: accountId,
+      },
+      destination,
+      amount,
+    })
+  );
+}
+
+async function getTransactions() {
+  const { direction } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "direction",
+      message: "Select direction",
+      choices: ["incoming", "outgoing"],
+    },
+  ]);
+  const filter = {};
+  if (direction === "incoming") {
+    filter["incoming"] = true;
+  }
+  if (direction === "outgoing") {
+    filter["outgoing"] = true;
+  }
+  return execute(() => ew.getTransactions(filter as any));
+}
+
+async function createTransaction() {
+  const { accountId, assetId } = await input("accountId", "assetId");
+  const amount = await inputAny("amount");
+  const destination = await promptDestination();
+  return execute(() =>
+    ew.createTransaction({
+      assetId,
+      source: {
+        id: `${accountId}`,
+      },
+      destination,
+      amount,
+    })
+  );
+}
+
+async function promptDestination(): Promise<DestinationTransferPeerPath> {
+  const { destinationType } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "destinationType",
+      message: "Select destination type",
+      choices: ["VAULT_ACCOUNT", "ONE_TIME_ADDRESS", "END_USER_WALLET"],
+    },
+  ]);
+
+  let destination: DestinationTransferPeerPath;
+
+  switch (destinationType) {
+    case "ONE_TIME_ADDRESS":
+      const destAddress = await inputAny("Destination Address");
+      destination = {
+        type: "ONE_TIME_ADDRESS",
+        oneTimeAddress: {
+          address: destAddress,
+        },
+      };
+      break;
+    case "END_USER_WALLET":
+      const destWalletId = await inputAny("Destination Wallet ID");
+      destination = {
+        type: "END_USER_WALLET",
+        walletId: destWalletId,
+        id: "0",
+      };
+      break;
+    case "VAULT_ACCOUNT":
+      const vaultAccountId = await inputAny("Vault Account ID", "0");
+      destination = {
+        type: "VAULT_ACCOUNT",
+        id: vaultAccountId,
+      };
+      break;
+  }
+
+  return destination;
 }
