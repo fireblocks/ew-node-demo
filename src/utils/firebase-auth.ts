@@ -3,7 +3,11 @@ import * as serviceAccount from "../../secrets/service-account-key.json";
 import * as firebase_secrets from "../../secrets/firebase-auth-secrets";
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  credential: admin.credential.cert({
+    projectId: serviceAccount.project_id,
+    clientEmail: serviceAccount.client_email,
+    privateKey: serviceAccount.private_key,
+  }),
 });
 
 const firebaseUid = process.env.FIREBASE_UID;
@@ -40,9 +44,41 @@ async function getFirebaseAuthToken(uid: string): Promise<string> {
   }
 }
 
-export async function getToken() {
-  if (!issuedToken) {
+export async function getToken(forceNew = false): Promise<string> {
+  if (forceNew || !issuedToken) {
     issuedToken = await getFirebaseAuthToken(firebaseUid);
   }
   return issuedToken;
+}
+
+export async function setCustomClaim(
+  uid: string,
+  claimKey: string,
+  claimValue: string
+) {
+  try {
+    // Fetch current custom claims
+    const user = await admin.auth().getUser(uid);
+    const currentClaims = user.customClaims || {};
+
+    // Update claims
+    const updatedClaims =
+      claimValue === "CLEAR"
+        ? null
+        : { ...currentClaims, [claimKey]: claimValue };
+    await admin.auth().setCustomUserClaims(uid, updatedClaims);
+
+    console.log(
+      `Custom claim for user '${uid}' has been ${
+        claimValue === "CLEAR"
+          ? "cleared"
+          : `set to [${claimKey}]: '${claimValue}'`
+      }`
+    );
+  } catch (error) {
+    console.error(
+      `Error setting custom claim for user '${uid}' [${claimKey}: ${claimValue}]`,
+      error
+    );
+  }
 }
