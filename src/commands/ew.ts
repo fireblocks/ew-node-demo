@@ -280,10 +280,11 @@ async function promptDestination(): Promise<DestinationTransferPeerPath> {
       break;
     case "END_USER_WALLET":
       const destWalletId = await inputAny("Destination Wallet ID");
+      const destAccountId = await inputAny("Destination Account ID");
       destination = {
         type: "END_USER_WALLET",
         walletId: destWalletId,
-        id: "0",
+        id: `${destAccountId}`,
       };
       break;
     case "VAULT_ACCOUNT":
