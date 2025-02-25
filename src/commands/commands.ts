@@ -15,10 +15,22 @@ export async function execute(cb: () => Promise<any>) {
 }
 function logResult(result: any) {
   console.log(
-    chalk.green("Command executed successfully:", JSON.stringify(result))
+    chalk.green(
+      "\n================================================================================\n",
+      "Command executed successfully:\n",
+      JSON.stringify(result, null, 2),
+      "\n================================================================================\n"
+    )
   );
 }
 
 function logError(error: any) {
-  console.log(chalk.red("Command failed:", JSON.stringify(error)));
+  console.log(
+    chalk.red(
+      "\n================================================================================\n",
+      "Command failed:\n",
+      JSON.stringify(error),
+      "\n================================================================================\n"
+    )
+  );
 }

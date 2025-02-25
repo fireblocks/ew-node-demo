@@ -57,7 +57,7 @@ async function promptUser() {
       type: "list",
       name: "claimValue",
       message: "Select the claim value:",
-      choices: ["USER_INPUT", "RANDOM", "CLEAR"],
+      choices: ["RANDOM", "USER_INPUT", "CLEAR"],
     },
   ]);
   let claimValue: string;

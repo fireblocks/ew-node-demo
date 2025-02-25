@@ -26,7 +26,7 @@ async function main() {
       },
     ]);
 
-    if (command === chalk.red("EXIT")) {
+    if (command === "EXIT") {
       exit = true;
     } else {
       await allCommands[command]();
@@ -39,14 +39,18 @@ function getChoices() {
   const ewChoices =
     state.initEW && Object.keys(EWCommands).length
       ? [
-          new inquirer.Separator(chalk.bold("=== EW Commands ===")),
+          new inquirer.Separator(
+            chalk.bold.cyan("========== EW Commands ==========")
+          ),
           ...Object.keys(EWCommands),
         ]
       : [];
   const coreChoices =
     state.initCore && Object.keys(CoreCommands).length
       ? [
-          new inquirer.Separator(chalk.bold("=== Core Commands ===")),
+          new inquirer.Separator(
+            chalk.bold.cyan("========== Core Commands ==========")
+          ),
           ...Object.keys(CoreCommands),
         ]
       : [];
