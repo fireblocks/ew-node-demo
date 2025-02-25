@@ -25,7 +25,7 @@ export const Commands: Record<string, Function> = {
   ["Initialize Core"]: initCore,
 
   // Embedded Wallet
-  [chalk.bold.italic("WALLET MANAGEMENT")]: () => {},
+  [chalk.bold.italic("Wallet Management")]: () => {},
   // Wallet
   ["Assign Wallet"]: assignWallet,
 
@@ -51,21 +51,21 @@ export const Commands: Record<string, Function> = {
   ["Get Latest Backup"]: getLatestBackup,
 
   // NFTs
-  [chalk.bold.italic("NFTS")]: () => {},
+  [chalk.bold.italic("NFTs")]: () => {},
   ["Get NFT"]: getNFT,
   ["Get Owned NFTs"]: getOwnedNFTs,
   ["List Owned Assets"]: listOwnedAssets,
   ["List Owned Collections"]: listOwnedCollections,
 
   // Web3 Connections
-  [chalk.bold.italic("WEB3 CONNECTIONS")]: () => {},
+  [chalk.bold.italic("Web3 Connections")]: () => {},
   ["Create Web3 Connection"]: createWeb3Connection,
   ["Get Web3 Connections"]: getWeb3Connections,
   ["Remove Web3 Connection"]: removeWeb3Connection,
   ["Submit Web3 Connection"]: submitWeb3Connection,
 
   // Transactions
-  [chalk.bold.italic("TRANSACTIONS")]: () => {},
+  [chalk.bold.italic("Transactions")]: () => {},
   ["Create Transaction"]: createTransaction,
   ["Cancel Transaction"]: cancelTransaction,
   ["Estimate Transaction Fee"]: estimateTransactionFee,

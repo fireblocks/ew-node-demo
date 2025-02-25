@@ -6,22 +6,33 @@ import chalk from "chalk";
 import { coreDeviceId } from "./ew";
 
 export const Commands: Record<string, Function> = {
+  // Wallet Management
+  [chalk.bold.italic("Wallet Management")]: () => {},
   ["Approve Join Wallet Request"]: approveJoinWalletRequest,
-  ["Backup Keys"]: backupKeys,
-  ["Clear All Storage"]: clearAllStorage,
-  ["Derive Asset Key"]: deriveAssetKey,
-  ["Dispose"]: dispose,
-  ["Generate MPC Keys"]: generateMPCKeys,
-  ["Get In Progress Signing Tx ID"]: getInProgressSigningTxId,
-  ["Get Keys Status"]: getKeysStatus,
-  ["Get Physical Device ID"]: getPhysicalDeviceId,
-  ["Recover Keys"]: recoverKeys,
   ["Request Join Existing Wallet"]: requestJoinExistingWallet,
+  ["Stop Join Wallet"]: stopJoinWallet,
+  ["Takeover"]: takeover,
+
+  // Key Management
+  [chalk.bold.italic("Key Management")]: () => {},
+  ["Backup Keys"]: backupKeys,
+  ["Recover Keys"]: recoverKeys,
+  ["Generate MPC Keys"]: generateMPCKeys,
+  ["Derive Asset Key"]: deriveAssetKey,
+  ["Get Keys Status"]: getKeysStatus,
+  ["Stop MPC Device Setup"]: stopMpcDeviceSetup,
+
+  // Transaction Management
+  [chalk.bold.italic("Transactions")]: () => {},
   ["Sign Transaction"]: signTransaction,
   ["Stop In Progress Sign Transaction"]: stopInProgressSignTransaction,
-  ["Stop Join Wallet"]: stopJoinWallet,
-  ["Stop MPC Device Setup"]: stopMpcDeviceSetup,
-  ["Takeover"]: takeover,
+  ["Get In Progress Signing Tx ID"]: getInProgressSigningTxId,
+
+  // General
+  [chalk.bold.italic("General")]: () => {},
+  ["Clear All Storage"]: clearAllStorage,
+  ["Dispose"]: dispose,
+  ["Get Physical Device ID"]: getPhysicalDeviceId,
 };
 
 export async function dispose() {
