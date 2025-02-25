@@ -104,13 +104,13 @@ process.on("uncaughtException", (error) => {
   }
 });
 function getSessionDetails(): string {
-  const yellowBlueLine = (chalk.yellow("==") + chalk.blue("==")).repeat(15);
+  const yellowBlueLine = (chalk.yellow("==") + chalk.blue("==")).repeat(13);
   return chalk.bold.yellow(
     `\n${yellowBlueLine}\n`,
-    " ".repeat(20),
+    " ".repeat(16),
     chalk.italic.bgBlue("Session details\n"),
-    `Wallet ID:        ${walletId ?? "___"}\n`,
-    `Core Device ID:   ${coreDeviceId ?? "___"}`,
+    `Wallet ID: ${walletId ?? "___"}\n`,
+    `Device ID: ${coreDeviceId ?? "___"}`,
     `\n${yellowBlueLine}\n`
   );
 }

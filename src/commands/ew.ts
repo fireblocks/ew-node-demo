@@ -1,5 +1,10 @@
 import { EmbeddedWallet } from "@fireblocks/embedded-wallet-sdk";
-import { getFireblocksNCWInstance, TEnv } from "@fireblocks/ncw-js-sdk";
+import {
+  ConsoleLoggerFactory,
+  generateDeviceId,
+  getFireblocksNCWInstance,
+  TEnv,
+} from "@fireblocks/ncw-js-sdk";
 import inquirer from "inquirer";
 import { getToken } from "../utils/firebase-auth";
 import chalk from "chalk";
@@ -16,32 +21,56 @@ export let coreDeviceId: string | null = null;
 export let walletId: string | null = null;
 export let ew: EmbeddedWallet | null = null;
 export const Commands: Record<string, Function> = {
+  // Core
   ["Initialize Core"]: initCore,
+
+  // Embedded Wallet
+  [chalk.bold.italic("WALLET MANAGEMENT")]: () => {},
+  // Wallet
   ["Assign Wallet"]: assignWallet,
-  ["Add Asset"]: addAsset,
+
+  // Accounts
   ["Create Account"]: createAccount,
   ["Get Accounts"]: getAccounts,
-  ["Get Addresses"]: getAddresses,
+
+  // Assets
+  ["Add Asset"]: addAsset,
   ["Get Asset"]: getAsset,
   ["Get Assets"]: getAssets,
   ["Get Balance"]: getBalance,
+  ["Get Supported Assets"]: getSupportedAssets,
   ["Refresh Balance"]: refreshBalance,
+
+  // Addresses
+  ["Get Addresses"]: getAddresses,
+
+  // Devices
   ["Get Device"]: getDevice,
+
+  // Backups
   ["Get Latest Backup"]: getLatestBackup,
+
+  // NFTs
+  [chalk.bold.italic("NFTS")]: () => {},
   ["Get NFT"]: getNFT,
   ["Get Owned NFTs"]: getOwnedNFTs,
-  ["List Owned Collections"]: listOwnedCollections,
   ["List Owned Assets"]: listOwnedAssets,
-  ["Get Supported Assets"]: getSupportedAssets,
-  ["Get Web3 Connections"]: getWeb3Connections,
+  ["List Owned Collections"]: listOwnedCollections,
+
+  // Web3 Connections
+  [chalk.bold.italic("WEB3 CONNECTIONS")]: () => {},
   ["Create Web3 Connection"]: createWeb3Connection,
-  ["Submit Web3 Connection"]: submitWeb3Connection,
+  ["Get Web3 Connections"]: getWeb3Connections,
   ["Remove Web3 Connection"]: removeWeb3Connection,
+  ["Submit Web3 Connection"]: submitWeb3Connection,
+
+  // Transactions
+  [chalk.bold.italic("TRANSACTIONS")]: () => {},
   ["Create Transaction"]: createTransaction,
+  ["Cancel Transaction"]: cancelTransaction,
   ["Estimate Transaction Fee"]: estimateTransactionFee,
   ["Get Transaction By ID"]: getTransaction,
   ["Get Transactions"]: getTransactions,
-  ["Cancel Transaction"]: cancelTransaction,
 };
 
 export async function initEw() {
@@ -49,9 +78,17 @@ export async function initEw() {
     console.log("EW already initialized");
     return;
   }
+  const { sdkLogs } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "sdkLogs",
+      message: "Enable SDK logs?",
+      default: false,
+    },
+  ]);
   ew = new EmbeddedWallet({
     env: process.env.ENV as TEnv,
-    // logger: ConsoleLoggerFactory(),
+    logger: sdkLogs ? ConsoleLoggerFactory() : undefined,
     authClientId: process.env.AUTH_CLIENT_ID,
     authTokenRetriever: {
       getAuthToken: getToken,
@@ -166,14 +203,18 @@ async function removeWeb3Connection() {
 }
 
 async function initCore() {
-  const { deviceId } = await inquirer.prompt([
+  let { deviceId } = await inquirer.prompt([
     {
       type: "input",
       name: "deviceId",
-      message: "Enter device ID",
+      message: "Enter device ID (leave blank to generate a random one)",
       default: getDeviceId(),
     },
   ]);
+
+  if (!deviceId) {
+    deviceId = getDeviceId(generateDeviceId());
+  }
 
   if (getFireblocksNCWInstance(deviceId)) {
     console.log("Core already initialized");
