@@ -4,6 +4,7 @@
   "description": "An interactive CLI tool for Embedded Wallets",
   "main": "src/index.ts",
   "scripts": {
+    "claim": "ts-node --require dotenv/config principal-claim/claim.ts",
     "start": "ts-node --require dotenv/config src/app.ts",
     "start:prod": "node -r dotenv/config dist/app.js",
     "build": "tsc"
