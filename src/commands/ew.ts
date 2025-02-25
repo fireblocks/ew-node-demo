@@ -1,12 +1,7 @@
 import { EmbeddedWallet } from "@fireblocks/embedded-wallet-sdk";
-import {
-  ConsoleLoggerFactory,
-  getFireblocksNCWInstance,
-  TEnv,
-} from "@fireblocks/ncw-js-sdk";
+import { getFireblocksNCWInstance, TEnv } from "@fireblocks/ncw-js-sdk";
 import inquirer from "inquirer";
 import { getToken } from "../utils/firebase-auth";
-import { execute } from "./commands";
 import chalk from "chalk";
 import {
   FileSystemStorageProvider,
@@ -17,6 +12,7 @@ import { input, inputAny } from "../utils/prompt-utils";
 import { state } from "../app";
 import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
 
+export let coreDeviceId: string | null = null;
 export let walletId: string | null = null;
 export let ew: EmbeddedWallet | null = null;
 export const Commands: Record<string, Function> = {
@@ -67,93 +63,91 @@ export async function initEw() {
 }
 
 async function assignWallet() {
-  const result = await execute(() => ew.assignWallet());
+  const result = await ew.assignWallet();
   walletId = result.walletId;
 }
 async function getAccounts() {
-  return execute(() => ew.getAccounts());
+  return ew.getAccounts();
 }
 async function getAddresses() {
   const { accountId, assetId } = await input("accountId", "assetId");
 
-  return execute(() => ew.getAddresses(accountId, assetId));
+  return ew.getAddresses(accountId, assetId);
 }
 async function createAccount() {
-  return execute(() => ew.createAccount());
+  return ew.createAccount();
 }
 
 async function getAsset() {
   const { accountId, assetId } = await input("accountId", "assetId");
-  return execute(() => ew.getAsset(Number(accountId), assetId));
+  return ew.getAsset(Number(accountId), assetId);
 }
 
 async function getBalance() {
   const { accountId, assetId } = await input("accountId", "assetId");
-  return execute(() => ew.getBalance(accountId, assetId));
+  return ew.getBalance(accountId, assetId);
 }
 
 async function refreshBalance() {
   const { accountId, assetId } = await input("accountId", "assetId");
-  return execute(() => ew.refreshBalance(accountId, assetId));
+  return ew.refreshBalance(accountId, assetId);
 }
 
 async function getDevice() {
   const { deviceId } = await input("deviceId");
-  return execute(() => ew.getDevice(deviceId));
+  return ew.getDevice(deviceId);
 }
 
 async function getLatestBackup() {
-  return execute(() => ew.getLatestBackup());
+  return ew.getLatestBackup();
 }
 
 async function getNFT() {
   const id = await inputAny("NFT ID");
-  return execute(() => ew.getNFT(id));
+  return ew.getNFT(id);
 }
 async function getOwnedNFTs() {
   const { accountId } = await input("accountId");
-  return execute(() => ew.getOwnedNFTs(accountId));
+  return ew.getOwnedNFTs(accountId);
 }
 
 async function listOwnedCollections() {
   const { accountId } = await input("accountId");
-  return execute(() => ew.listOwnedCollections(accountId));
+  return ew.listOwnedCollections(accountId);
 }
 
 async function listOwnedAssets() {
   const { accountId } = await input("accountId");
-  return execute(() => ew.listOwnedAssets(accountId));
+  return ew.listOwnedAssets(accountId);
 }
 
 async function getSupportedAssets() {
-  return execute(() => ew.getSupportedAssets());
+  return ew.getSupportedAssets();
 }
 
 async function getAssets() {
   const { accountId } = await input("accountId");
-  return execute(() => ew.getAssets(accountId));
+  return ew.getAssets(accountId);
 }
 
 async function addAsset() {
   const { accountId, assetId } = await input("accountId", "assetId");
 
-  return execute(() => ew.addAsset(Number(accountId), assetId));
+  return ew.addAsset(Number(accountId), assetId);
 }
 
 async function getWeb3Connections() {
-  return execute(() => ew.getWeb3Connections());
+  return ew.getWeb3Connections();
 }
 
 async function createWeb3Connection() {
   const { accountId } = await input("accountId");
   const uri = await inputAny("uri");
-  return execute(() =>
-    ew.createWeb3Connection({
-      feeLevel: "MEDIUM" as any,
-      ncwAccountId: accountId,
-      uri,
-    })
-  );
+  return ew.createWeb3Connection({
+    feeLevel: "MEDIUM" as any,
+    ncwAccountId: accountId,
+    uri,
+  });
 }
 
 async function submitWeb3Connection() {
@@ -164,12 +158,12 @@ async function submitWeb3Connection() {
     message: "Approve connection?",
   });
 
-  return execute(() => ew.submitWeb3Connection(connectionId, approve));
+  return ew.submitWeb3Connection(connectionId, approve);
 }
 
 async function removeWeb3Connection() {
   const connectionId = await inputAny("connectionId");
-  return execute(() => ew.removeWeb3Connection(connectionId));
+  return ew.removeWeb3Connection(connectionId);
 }
 
 async function initCore() {
@@ -201,32 +195,31 @@ async function initCore() {
     console.log("Core initialized");
   }
   state.initCore = true;
+  coreDeviceId = deviceId;
 }
 
 async function getTransaction() {
   const txId = await inputAny("txId");
-  return execute(() => ew.getTransaction(txId));
+  return ew.getTransaction(txId);
 }
 
 async function cancelTransaction() {
   const txId = await inputAny("txId");
-  return execute(() => ew.cancelTransaction(txId));
+  return ew.cancelTransaction(txId);
 }
 
 async function estimateTransactionFee() {
   const { accountId, assetId } = await input("accountId", "assetId");
   const amount = await inputAny("amount");
   const destination = await promptDestination();
-  return execute(() =>
-    ew.estimateTransactionFee({
-      assetId,
-      source: {
-        id: accountId,
-      },
-      destination,
-      amount,
-    })
-  );
+  return ew.estimateTransactionFee({
+    assetId,
+    source: {
+      id: accountId,
+    },
+    destination,
+    amount,
+  });
 }
 
 async function getTransactions() {
@@ -245,23 +238,21 @@ async function getTransactions() {
   if (direction === "outgoing") {
     filter["outgoing"] = true;
   }
-  return execute(() => ew.getTransactions(filter as any));
+  return ew.getTransactions(filter as any);
 }
 
 async function createTransaction() {
   const { accountId, assetId } = await input("accountId", "assetId");
   const amount = await inputAny("amount");
   const destination = await promptDestination();
-  return execute(() =>
-    ew.createTransaction({
-      assetId,
-      source: {
-        id: `${accountId}`,
-      },
-      destination,
-      amount,
-    })
-  );
+  return ew.createTransaction({
+    assetId,
+    source: {
+      id: `${accountId}`,
+    },
+    destination,
+    amount,
+  });
 }
 
 async function promptDestination(): Promise<DestinationTransferPeerPath> {

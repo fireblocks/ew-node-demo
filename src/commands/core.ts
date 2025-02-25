@@ -3,7 +3,7 @@ import { getDeviceId } from "../utils/utils";
 import inquirer from "inquirer";
 import { inputAny } from "../utils/prompt-utils";
 import chalk from "chalk";
-import { execute } from "./commands";
+import { coreDeviceId } from "./ew";
 
 export const Commands: Record<string, Function> = {
   ["Dispose"]: dispose,
@@ -26,12 +26,12 @@ export const Commands: Record<string, Function> = {
 
 export async function dispose() {
   const instance = await getCoreInstance();
-  return execute(() => instance.dispose());
+  return instance.dispose();
 }
 
 export async function clearAllStorage() {
   const instance = await getCoreInstance();
-  return execute(() => instance.clearAllStorage());
+  return instance.clearAllStorage();
 }
 
 export async function generateMPCKeys() {
@@ -45,28 +45,28 @@ export async function generateMPCKeys() {
       default: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
     },
   ]);
-  return execute(() => instance.generateMPCKeys(new Set(algos)));
+  return instance.generateMPCKeys(new Set(algos));
 }
 
 export async function stopMpcDeviceSetup() {
   const instance = await getCoreInstance();
-  return execute(() => instance.stopMpcDeviceSetup());
+  return instance.stopMpcDeviceSetup();
 }
 
 export async function signTransaction() {
   const instance = await getCoreInstance();
   const txId = await inputAny("transaction ID");
-  return execute(() => instance.signTransaction(txId));
+  return instance.signTransaction(txId);
 }
 
 export async function stopInProgressSignTransaction() {
   const instance = await getCoreInstance();
-  return execute(() => instance.stopInProgressSignTransaction());
+  return instance.stopInProgressSignTransaction();
 }
 
 export async function getInProgressSigningTxId() {
   const instance = await getCoreInstance();
-  return execute(() => instance.getInProgressSigningTxId());
+  return instance.getInProgressSigningTxId();
 }
 
 export async function backupKeys() {
@@ -79,7 +79,7 @@ export async function backupKeys() {
     "passphrase ID (uuid)",
     process.env.DEFAULT_PASSPHRASE_ID
   );
-  return execute(() => instance.backupKeys(passphrase, passphraseId));
+  return instance.backupKeys(passphrase, passphraseId);
 }
 
 export async function recoverKeys() {
@@ -88,34 +88,32 @@ export async function recoverKeys() {
     "passphrase",
     process.env.DEFAULT_PASSPHRASE
   );
-  return execute(() => instance.recoverKeys(() => Promise.resolve(passphrase)));
+  return instance.recoverKeys(() => Promise.resolve(passphrase));
 }
 
 export async function requestJoinExistingWallet() {
   const instance = await getCoreInstance();
-  return execute(() =>
-    instance.requestJoinExistingWallet({
-      onRequestId: (requestId) => {
-        console.log(chalk.cyan(`Request ID: ${requestId}`));
-      },
-    })
-  );
+  return instance.requestJoinExistingWallet({
+    onRequestId: (requestId) => {
+      console.log(chalk.cyan(`Request ID: ${requestId}`));
+    },
+  });
 }
 
 export async function approveJoinWalletRequest() {
   const instance = await getCoreInstance();
   const requestId = await inputAny("request ID");
-  return execute(() => instance.approveJoinWalletRequest(requestId));
+  return instance.approveJoinWalletRequest(requestId);
 }
 
 export async function stopJoinWallet() {
   const instance = await getCoreInstance();
-  return execute(async () => instance.stopJoinWallet());
+  return instance.stopJoinWallet();
 }
 
 export async function takeover() {
   const instance = await getCoreInstance();
-  return execute(() => instance.takeover());
+  return instance.takeover();
 }
 
 // export async function exportFullKeys() {
@@ -130,29 +128,27 @@ export async function deriveAssetKey() {
   const account = await inputAny("account");
   const change = await inputAny("change");
   const index = await inputAny("index");
-  return execute(async () =>
-    instance.deriveAssetKey(
-      extendedPrivateKey,
-      Number(coinType),
-      Number(account),
-      Number(change),
-      Number(index)
-    )
+  return instance.deriveAssetKey(
+    extendedPrivateKey,
+    Number(coinType),
+    Number(account),
+    Number(change),
+    Number(index)
   );
 }
 
 export async function getKeysStatus() {
   const instance = await getCoreInstance();
-  return execute(() => instance.getKeysStatus());
+  return instance.getKeysStatus();
 }
 
 export async function getPhysicalDeviceId() {
   const instance = await getCoreInstance();
-  return execute(async () => instance.getPhysicalDeviceId());
+  return instance.getPhysicalDeviceId();
 }
 
 async function getCoreInstance() {
-  const deviceId = getDeviceId();
+  const deviceId = coreDeviceId ?? getDeviceId();
   const instance = getFireblocksNCWInstance(deviceId);
   if (!instance) {
     throw new Error("Failed to get core instance");
