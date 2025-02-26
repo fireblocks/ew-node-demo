@@ -2,7 +2,7 @@ import {
   generateDeviceId,
   getFireblocksNCWInstance,
 } from "@fireblocks/ncw-js-sdk";
-import { getDeviceId } from "../utils/utils";
+import { getDeviceId, setDeviceId } from "../utils/storage-utils";
 import inquirer from "inquirer";
 import { inputAny } from "../utils/prompt-utils";
 import chalk from "chalk";
@@ -174,7 +174,7 @@ async function getCoreInstance() {
 
 async function setCoreDeviceId() {
   const deviceId = await inputAny("deviceId", generateDeviceId());
-  getDeviceId(deviceId);
+  setDeviceId(deviceId);
   state.coreDeviceId = deviceId;
   return deviceId;
 }

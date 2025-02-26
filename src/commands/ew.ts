@@ -12,7 +12,7 @@ import {
   FileSystemStorageProvider,
   FileSystemSecureStorageProvider,
 } from "../utils/sdk-storage";
-import { getDeviceId } from "../utils/utils";
+import { getDeviceId, setDeviceId } from "../utils/storage-utils";
 import { input, inputAny } from "../utils/prompt-utils";
 import { state } from "../app";
 import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
@@ -212,7 +212,7 @@ async function initCore() {
   ]);
 
   if (!deviceId) {
-    deviceId = getDeviceId(generateDeviceId());
+    deviceId = setDeviceId(generateDeviceId());
   }
 
   if (getFireblocksNCWInstance(deviceId)) {
