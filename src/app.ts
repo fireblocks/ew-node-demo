@@ -4,13 +4,14 @@ import { Commands as BaseCommands } from "./commands/commands";
 import { Commands as EWCommands } from "./commands/ew";
 import { Commands as CoreCommands } from "./commands/core";
 
+const EXIT_COMMAND = chalk.bold.italic("EXIT");
+const LINE = "=".repeat(80);
 export const state = {
   initEW: false,
   initCore: false,
   walletId: undefined,
   coreDeviceId: undefined,
 };
-const exitCommand = chalk.bold.italic("EXIT");
 
 const allCommands = { ...BaseCommands, ...EWCommands, ...CoreCommands };
 async function main() {
@@ -29,7 +30,7 @@ async function main() {
       },
     ]);
 
-    if (command === exitCommand) {
+    if (command === EXIT_COMMAND) {
       shouldExit = true;
     } else {
       await execute(() => allCommands[command]());
@@ -47,26 +48,23 @@ export async function execute(cb: () => Promise<any>) {
   }
 }
 function logResult(result: any) {
-  if (Set.prototype.isPrototypeOf(result)) {
+  if (result instanceof Set) {
     result = Array.from(result);
   }
-  console.log(
-    chalk.green(
-      "\n================================================================================\n",
-      "Command executed successfully:\n",
-      JSON.stringify(result, null, 2),
-      "\n================================================================================\n"
-    )
-  );
+  logMessage("Command executed successfully:", result, chalk.green);
 }
 
 function logError(error: any) {
+  logMessage("Command failed:", error, chalk.red);
+}
+
+function logMessage(message: string, data: any, color: chalk.Chalk) {
   console.log(
-    chalk.red(
-      "\n================================================================================\n",
-      "Command failed:\n",
-      JSON.stringify(error),
-      "\n================================================================================\n"
+    color(
+      `\n${message}`,
+      `\n${LINE}\n`,
+      JSON.stringify(data, null, 2),
+      `\n${LINE}\n`
     )
   );
 }
@@ -94,7 +92,7 @@ function getChoices() {
     ...ewChoices,
     ...coreChoices,
     new inquirer.Separator(),
-    exitCommand,
+    EXIT_COMMAND,
   ];
 }
 

@@ -99,6 +99,7 @@ export async function initEw() {
 async function assignWallet() {
   const result = await ew.assignWallet();
   state.walletId = result.walletId;
+  return result;
 }
 async function getAccounts() {
   return ew.getAccounts();

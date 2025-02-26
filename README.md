@@ -25,6 +25,7 @@ Rename the `.env.example` file to `.env`, the `secrets-example` folder to `secre
 
 ```bash
 mv .env.example .env
+mv secrets-example secrets
 ```
 
 ## Usage

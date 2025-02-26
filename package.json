@@ -4,7 +4,6 @@
   "description": "An interactive CLI tool for Embedded Wallets",
   "main": "src/index.ts",
   "scripts": {
-    "claim": "ts-node --require dotenv/config principal-claim/claim.ts",
     "start": "ts-node --require dotenv/config src/app.ts",
     "build": "tsc"
   },
@@ -18,7 +17,7 @@
   },
   "devDependencies": {
     "@fireblocks/ts-sdk": "^8.1.0",
-    "ts-node": "^10.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
   "keywords": [
