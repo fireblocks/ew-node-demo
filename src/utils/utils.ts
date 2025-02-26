@@ -12,6 +12,7 @@ export function getDeviceId(overrideDeviceId?: string, failOnEmpty = false) {
 
   if (overrideDeviceId) {
     fs.writeFileSync(filePath, overrideDeviceId);
+    console.log("DeviceId overridden: " + overrideDeviceId);
     return overrideDeviceId;
   }
 

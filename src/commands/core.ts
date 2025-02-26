@@ -1,11 +1,16 @@
-import { getFireblocksNCWInstance } from "@fireblocks/ncw-js-sdk";
+import {
+  generateDeviceId,
+  getFireblocksNCWInstance,
+} from "@fireblocks/ncw-js-sdk";
 import { getDeviceId } from "../utils/utils";
 import inquirer from "inquirer";
 import { inputAny } from "../utils/prompt-utils";
 import chalk from "chalk";
-import { coreDeviceId } from "./ew";
+import { state } from "../app";
 
 export const Commands: Record<string, Function> = {
+  ["Set Device ID"]: setCoreDeviceId,
+
   // Wallet Management
   [chalk.bold.italic("Wallet Management")]: () => {},
   ["Approve Join Wallet Request"]: approveJoinWalletRequest,
@@ -35,17 +40,17 @@ export const Commands: Record<string, Function> = {
   ["Get Physical Device ID"]: getPhysicalDeviceId,
 };
 
-export async function dispose() {
+async function dispose() {
   const instance = await getCoreInstance();
   return instance.dispose();
 }
 
-export async function clearAllStorage() {
+async function clearAllStorage() {
   const instance = await getCoreInstance();
   return instance.clearAllStorage();
 }
 
-export async function generateMPCKeys() {
+async function generateMPCKeys() {
   const instance = await getCoreInstance();
   const { algos } = await inquirer.prompt([
     {
@@ -53,34 +58,34 @@ export async function generateMPCKeys() {
       name: "algos",
       message: "Select algorithms",
       choices: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
-      default: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
+      default: ["MPC_CMP_ECDSA_SECP256K1"],
     },
   ]);
   return instance.generateMPCKeys(new Set(algos));
 }
 
-export async function stopMpcDeviceSetup() {
+async function stopMpcDeviceSetup() {
   const instance = await getCoreInstance();
   return instance.stopMpcDeviceSetup();
 }
 
-export async function signTransaction() {
+async function signTransaction() {
   const instance = await getCoreInstance();
   const txId = await inputAny("transaction ID");
   return instance.signTransaction(txId);
 }
 
-export async function stopInProgressSignTransaction() {
+async function stopInProgressSignTransaction() {
   const instance = await getCoreInstance();
   return instance.stopInProgressSignTransaction();
 }
 
-export async function getInProgressSigningTxId() {
+async function getInProgressSigningTxId() {
   const instance = await getCoreInstance();
   return instance.getInProgressSigningTxId();
 }
 
-export async function backupKeys() {
+async function backupKeys() {
   const instance = await getCoreInstance();
   const passphrase = await inputAny(
     "passphrase",
@@ -93,7 +98,7 @@ export async function backupKeys() {
   return instance.backupKeys(passphrase, passphraseId);
 }
 
-export async function recoverKeys() {
+async function recoverKeys() {
   const instance = await getCoreInstance();
   const passphrase = await inputAny(
     "passphrase",
@@ -102,7 +107,7 @@ export async function recoverKeys() {
   return instance.recoverKeys(() => Promise.resolve(passphrase));
 }
 
-export async function requestJoinExistingWallet() {
+async function requestJoinExistingWallet() {
   const instance = await getCoreInstance();
   return instance.requestJoinExistingWallet({
     onRequestId: (requestId) => {
@@ -111,28 +116,28 @@ export async function requestJoinExistingWallet() {
   });
 }
 
-export async function approveJoinWalletRequest() {
+async function approveJoinWalletRequest() {
   const instance = await getCoreInstance();
   const requestId = await inputAny("request ID");
   return instance.approveJoinWalletRequest(requestId);
 }
 
-export async function stopJoinWallet() {
+async function stopJoinWallet() {
   const instance = await getCoreInstance();
   return instance.stopJoinWallet();
 }
 
-export async function takeover() {
+async function takeover() {
   const instance = await getCoreInstance();
   return instance.takeover();
 }
 
-// export async function exportFullKeys() {
+// async function exportFullKeys() {
 //   const instance = await getCoreInstance();
 //   return instance.exportFullKeys();
 // }
 
-export async function deriveAssetKey() {
+async function deriveAssetKey() {
   const instance = await getCoreInstance();
   const extendedPrivateKey = await inputAny("extended private key");
   const coinType = await inputAny("coin type");
@@ -148,21 +153,28 @@ export async function deriveAssetKey() {
   );
 }
 
-export async function getKeysStatus() {
+async function getKeysStatus() {
   const instance = await getCoreInstance();
   return instance.getKeysStatus();
 }
 
-export async function getPhysicalDeviceId() {
+async function getPhysicalDeviceId() {
   const instance = await getCoreInstance();
   return instance.getPhysicalDeviceId();
 }
 
 async function getCoreInstance() {
-  const deviceId = coreDeviceId ?? getDeviceId();
+  const deviceId = state.coreDeviceId ?? getDeviceId();
   const instance = getFireblocksNCWInstance(deviceId);
   if (!instance) {
     throw new Error("Failed to get core instance");
   }
   return instance;
+}
+
+async function setCoreDeviceId() {
+  const deviceId = await inputAny("deviceId", generateDeviceId());
+  getDeviceId(deviceId);
+  state.coreDeviceId = deviceId;
+  return deviceId;
 }

@@ -17,8 +17,6 @@ import { input, inputAny } from "../utils/prompt-utils";
 import { state } from "../app";
 import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
 
-export let coreDeviceId: string | null = null;
-export let walletId: string | null = null;
 export let ew: EmbeddedWallet | null = null;
 export const Commands: Record<string, Function> = {
   // Core
@@ -100,7 +98,7 @@ export async function initEw() {
 
 async function assignWallet() {
   const result = await ew.assignWallet();
-  walletId = result.walletId;
+  state.walletId = result.walletId;
 }
 async function getAccounts() {
   return ew.getAccounts();
@@ -233,7 +231,7 @@ async function initCore() {
     });
   }
   state.initCore = true;
-  coreDeviceId = deviceId;
+  state.coreDeviceId = deviceId;
 }
 
 async function getTransaction() {

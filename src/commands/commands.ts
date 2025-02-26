@@ -1,6 +1,7 @@
 import inquirer from "inquirer";
 import { getToken, setCustomClaim } from "../utils/firebase-auth";
 import { initEw } from "./ew";
+import { state } from "../app";
 
 export const Commands: Record<string, Function> = {
   "Init Embedded Wallet": initEw,
@@ -46,4 +47,5 @@ async function setCustomPrincipalClaim() {
   }
   await setCustomClaim(answers.uid, answers.claimKey, claimValue);
   await getToken(true);
+  state.walletId = claimValue === "CLEAR" ? null : claimValue;
 }

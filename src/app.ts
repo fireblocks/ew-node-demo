@@ -1,12 +1,14 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { Commands as BaseCommands } from "./commands/commands";
-import { coreDeviceId, Commands as EWCommands, walletId } from "./commands/ew";
+import { Commands as EWCommands } from "./commands/ew";
 import { Commands as CoreCommands } from "./commands/core";
 
 export const state = {
   initEW: false,
   initCore: false,
+  walletId: undefined,
+  coreDeviceId: undefined,
 };
 const exitCommand = chalk.bold.italic("EXIT");
 
@@ -45,6 +47,9 @@ export async function execute(cb: () => Promise<any>) {
   }
 }
 function logResult(result: any) {
+  if (Set.prototype.isPrototypeOf(result)) {
+    result = Array.from(result);
+  }
   console.log(
     chalk.green(
       "\n================================================================================\n",
@@ -109,8 +114,12 @@ function getSessionDetails(): string {
     `\n${yellowBlueLine}\n`,
     " ".repeat(16),
     chalk.italic.bgBlue("Session details\n"),
-    `Wallet ID: ${walletId ?? "___"}\n`,
-    `Device ID: ${coreDeviceId ?? "___"}`,
+    `Init EW:   ${
+      state.initEW ? `✅\n Wallet ID: ${state.walletId ?? "___"}\n` : "❌"
+    }\n`,
+    `Init Core: ${
+      state.initCore ? `✅\n Device ID: ${state.coreDeviceId ?? "___"}` : "❌"
+    }`,
     `\n${yellowBlueLine}\n`
   );
 }
