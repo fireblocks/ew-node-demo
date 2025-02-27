@@ -4,6 +4,7 @@ import { initCore, initEw } from "./ew";
 import { state } from "../app";
 import { getWalletIds } from "../utils/storage-utils";
 import { askToSaveWalletId } from "../prompt";
+import { getFireblocksNCWInstance } from "@fireblocks/ncw-js-sdk";
 
 export const Commands: Record<string, Function> = {
   "Initialize Embedded Wallet": initEw,
@@ -74,4 +75,12 @@ async function setCustomPrincipalClaim() {
   // refresh the token
   await getToken(true);
   state.walletId = claimValue === "CLEAR" ? null : claimValue;
+  if (state.initCore && state.coreDeviceId) {
+    const instance = getFireblocksNCWInstance(state.coreDeviceId);
+    if (instance) {
+      instance.dispose();
+    }
+    state.initCore = false;
+    state.coreDeviceId = null;
+  }
 }
