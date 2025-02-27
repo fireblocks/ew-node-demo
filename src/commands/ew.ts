@@ -19,9 +19,6 @@ import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
 
 export let ew: EmbeddedWallet | null = null;
 export const Commands: Record<string, Function> = {
-  // Core
-  ["Initialize Core"]: initCore,
-
   // Embedded Wallet
   [chalk.bold.italic("Wallet Management")]: () => {},
   // Wallet
@@ -65,6 +62,7 @@ export const Commands: Record<string, Function> = {
   // Transactions
   [chalk.bold.italic("Transactions")]: () => {},
   ["Create Transaction"]: createTransaction,
+  ["Get Latest Transactions"]: getLatestTxs,
   ["Cancel Transaction"]: cancelTransaction,
   ["Estimate Transaction Fee"]: estimateTransactionFee,
   ["Get Transaction By ID"]: getTransaction,
@@ -201,7 +199,10 @@ async function removeWeb3Connection() {
   return ew.removeWeb3Connection(connectionId);
 }
 
-async function initCore() {
+export async function initCore() {
+  if (!ew) {
+    throw "Embedded Wallet not initialized";
+  }
   let { deviceId } = await inquirer.prompt([
     {
       type: "input",
@@ -238,6 +239,32 @@ async function initCore() {
 async function getTransaction() {
   const txId = await inputAny("txId");
   return ew.getTransaction(txId);
+}
+
+async function getLatestTxs() {
+  const [incoming, outgoing] = await Promise.all([
+    ew.getTransactions({
+      incoming: true,
+      orderBy: "lastUpdated",
+      limit: 3,
+    }),
+    ew.getTransactions({
+      outgoing: true,
+      orderBy: "lastUpdated",
+      limit: 3,
+    }),
+  ]);
+  return [...incoming.data, ...outgoing.data]
+    .sort((a, b) => (a.lastUpdated > b.lastUpdated ? -1 : 1))
+    .map((tx) => ({
+      id: tx.id,
+      asset: tx.assetId,
+      amount: tx.amount ?? tx.amountInfo,
+      status: tx.status,
+      source: tx.source,
+      destination: tx.destination,
+      lastUpdated: new Date(tx.lastUpdated).toLocaleString(),
+    }));
 }
 
 async function cancelTransaction() {

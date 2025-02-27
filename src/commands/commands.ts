@@ -1,11 +1,13 @@
 import inquirer from "inquirer";
 import { getToken, setCustomClaim } from "../utils/firebase-auth";
-import { initEw } from "./ew";
+import { initCore, initEw } from "./ew";
 import { state } from "../app";
-import { addWalletId, getWalletIds } from "../utils/storage-utils";
+import { getWalletIds } from "../utils/storage-utils";
+import { askToSaveWalletId } from "../prompt";
 
 export const Commands: Record<string, Function> = {
   "Init Embedded Wallet": initEw,
+  ["Initialize Core"]: initCore,
   "Set Custom Principal Claim": setCustomPrincipalClaim,
 };
 
@@ -41,7 +43,7 @@ async function setCustomPrincipalClaim() {
       },
     ]);
     claimValue = userInput;
-    askToSaveWalletId(claimValue);
+    await askToSaveWalletId(claimValue);
   } else if (answers.claimValue === "RANDOM") {
     claimValue = crypto.randomUUID();
   } else if (answers.claimValue === "CLEAR") {
@@ -68,39 +70,4 @@ async function setCustomPrincipalClaim() {
   // refresh the token
   await getToken(true);
   state.walletId = claimValue === "CLEAR" ? null : claimValue;
-}
-
-export async function askToSaveWalletId(walletId: string) {
-  const wallets = getWalletIds();
-  if (wallets?.find((opt) => opt.uuid === walletId)) {
-    return;
-  }
-  const { save } = await inquirer.prompt([
-    {
-      type: "confirm",
-      name: "save",
-      message: "Save this wallet ID?",
-    },
-  ]);
-  if (save) {
-    let walletName: string;
-    let nameExists: boolean;
-    do {
-      const response = await inquirer.prompt([
-        {
-          type: "input",
-          name: "walletName",
-          message: "Enter the wallet name:",
-        },
-      ]);
-      walletName = response.walletName;
-      nameExists = wallets?.some((opt) => opt.name === walletName);
-      if (nameExists) {
-        console.log(
-          "Wallet name already exists. Please enter a different name."
-        );
-      }
-    } while (nameExists);
-    addWalletId(walletName, walletId);
-  }
 }
