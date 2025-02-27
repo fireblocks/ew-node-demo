@@ -52,15 +52,13 @@ async function clearAllStorage() {
 
 async function generateMPCKeys() {
   const instance = await getCoreInstance();
-  const { algos } = await inquirer.prompt([
-    {
-      type: "checkbox",
-      name: "algos",
-      message: "Select algorithms",
-      choices: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
-      default: ["MPC_CMP_ECDSA_SECP256K1"],
-    },
-  ]);
+  const { algos } = await inquirer.prompt({
+    type: "checkbox",
+    name: "algos",
+    message: "Select algorithms",
+    choices: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
+    default: ["MPC_CMP_ECDSA_SECP256K1"],
+  });
   return instance.generateMPCKeys(new Set(algos));
 }
 

@@ -140,18 +140,15 @@ async function getNFT() {
   return ew.getNFT(id);
 }
 async function getOwnedNFTs() {
-  const { accountId } = await input("accountId");
-  return ew.getOwnedNFTs(accountId);
+  return ew.getOwnedNFTs();
 }
 
 async function listOwnedCollections() {
-  const { accountId } = await input("accountId");
-  return ew.listOwnedCollections(accountId);
+  return ew.listOwnedCollections();
 }
 
 async function listOwnedAssets() {
-  const { accountId } = await input("accountId");
-  return ew.listOwnedAssets(accountId);
+  return ew.listOwnedAssets();
 }
 
 async function getSupportedAssets() {
@@ -304,6 +301,23 @@ async function getTransactions() {
     filter["outgoing"] = true;
   }
   return ew.getTransactions(filter as any);
+}
+
+async function createTransactionByJsonInput() {
+  let txRequestJson: object | null = null;
+  while (!txRequestJson) {
+    const { txInput } = await inquirer.prompt({
+      type: "editor",
+      name: "txInput",
+      message: "Enter transaction JSON",
+    });
+    try {
+      txRequestJson = JSON.parse(txInput);
+    } catch (err) {
+      console.error("Invalid JSON, please try again.");
+    }
+  }
+  return ew.createTransaction(txRequestJson as any);
 }
 
 async function createTransaction() {
