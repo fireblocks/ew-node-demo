@@ -246,18 +246,19 @@ async function getLatestTxs() {
     ew.getTransactions({
       incoming: true,
       orderBy: "lastUpdated",
-      limit: 3,
+      limit: 2,
     }),
     ew.getTransactions({
       outgoing: true,
       orderBy: "lastUpdated",
-      limit: 3,
+      limit: 2,
     }),
   ]);
   return [...incoming.data, ...outgoing.data]
     .sort((a, b) => (a.lastUpdated > b.lastUpdated ? -1 : 1))
     .map((tx) => ({
       id: tx.id,
+      operation: tx.operation,
       asset: tx.assetId,
       amount: tx.amount ?? tx.amountInfo,
       status: tx.status,

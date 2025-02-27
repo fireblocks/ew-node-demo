@@ -6,8 +6,8 @@ import { getWalletIds } from "../utils/storage-utils";
 import { askToSaveWalletId } from "../prompt";
 
 export const Commands: Record<string, Function> = {
-  "Init Embedded Wallet": initEw,
-  ["Initialize Core"]: initCore,
+  "Initialize Embedded Wallet": initEw,
+  "Initialize Core NCW": initCore,
   "Set Custom Principal Claim": setCustomPrincipalClaim,
 };
 
