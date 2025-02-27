@@ -374,7 +374,10 @@ async function promptDestination(): Promise<DestinationTransferPeerPath> {
       };
       break;
     case "END_USER_WALLET":
-      const destWalletId = await inputAny("Destination Wallet ID");
+      const destWalletId = await inputAny(
+        "Destination Wallet ID",
+        state.walletId
+      );
       const destAccountId = await inputAny("Destination Account ID", "0");
       destination = {
         type: "END_USER_WALLET",
