@@ -62,6 +62,7 @@ export const Commands: Record<string, Function> = {
   // Transactions
   [chalk.bold.italic("Transactions")]: () => {},
   ["Create Transaction"]: createTransaction,
+  ["Create Transaction (by free json input)"]: createTransactionByJsonInput,
   ["Get Latest Transactions"]: getLatestTxs,
   ["Cancel Transaction"]: cancelTransaction,
   ["Estimate Transaction Fee"]: estimateTransactionFee,
@@ -304,20 +305,36 @@ async function getTransactions() {
 }
 
 async function createTransactionByJsonInput() {
-  let txRequestJson: object | null = null;
-  while (!txRequestJson) {
-    const { txInput } = await inquirer.prompt({
-      type: "editor",
-      name: "txInput",
-      message: "Enter transaction JSON",
-    });
-    try {
-      txRequestJson = JSON.parse(txInput);
-    } catch (err) {
-      console.error("Invalid JSON, please try again.");
-    }
-  }
-  return ew.createTransaction(txRequestJson as any);
+  const { txRequestJson } = await inquirer.prompt({
+    type: "editor",
+    name: "txRequestJson",
+    message: "Enter transaction JSON",
+    default: JSON.stringify(
+      {
+        assetId: "BTC",
+        source: {
+          id: "0",
+        },
+        destination: {
+          type: "VAULT_ACCOUNT",
+          id: "0",
+        },
+        amount: "1",
+      },
+      null,
+      2
+    ),
+    validate: (text) => {
+      try {
+        JSON.parse(text);
+        return true;
+      } catch (e) {
+        return "Invalid JSON. Please try again";
+      }
+    },
+  });
+
+  return ew.createTransaction(JSON.parse(txRequestJson));
 }
 
 async function createTransaction() {
