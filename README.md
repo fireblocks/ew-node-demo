@@ -23,7 +23,7 @@ yarn install
 
 ## Setup
 
-Rename the `.env.example` file to `.env`, the `secrets-example` folder to `secrets` and fill in the required variables. 
+Rename the `.env.example` file to `.env`, the `secrets.example` folder to `secrets` and fill in the required variables. 
 
 ```bash
 mv .env.example .env

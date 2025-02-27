@@ -34,8 +34,8 @@ export function getSessionDetails(): string {
   const yellowBlueLine = (chalk.yellow("==") + chalk.blue("==")).repeat(13);
   return chalk.bold.yellow(
     `\n${yellowBlueLine}\n`,
-    " ".repeat(16),
-    chalk.italic.bgBlue("Session details\n"),
+    " ".repeat(12),
+    chalk.italic.bgBlue(`Session details (${process.env.ENV})\n`),
     `Init EW:   ${
       state.initEW ? `✅\n Wallet ID: ${state.walletId ?? "___"}\n` : "❌"
     }\n`,
