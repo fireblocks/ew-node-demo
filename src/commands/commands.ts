@@ -50,6 +50,10 @@ async function setCustomPrincipalClaim() {
     claimValue = "CLEAR";
   } else if (answers.claimValue === "SAVED") {
     const opts = getWalletIds();
+    if (!opts) {
+      console.log("No saved wallet IDs found");
+      return;
+    }
     const getKey = (opt: { name: string; uuid: string }) =>
       `${opt.name}: ${opt.uuid}`;
     const { walletId } = await inquirer.prompt([
