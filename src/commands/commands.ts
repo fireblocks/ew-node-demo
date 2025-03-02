@@ -1,16 +1,18 @@
 import inquirer from "inquirer";
 import { getToken, setCustomClaim } from "../utils/firebase-auth";
-import { ew, initCore, initEw } from "./ew";
+import { assignWallet, ew, initCore, initEw } from "./ew";
 import { state } from "../app";
 import { getWalletIds } from "../utils/storage-utils";
-import { askToSaveWalletId, printWalletSummary } from "../prompt";
+import { askToSaveWalletId } from "../prompt";
 import { getFireblocksNCWInstance } from "@fireblocks/ncw-js-sdk";
+import { printWalletSummary } from "../utils/display";
 
 export const Commands: Record<string, Function> = {
   "Get Wallet Summary": getSummary,
   "Init all": initAll,
   "Initialize Embedded Wallet": initEw,
   "Initialize Core NCW": initCore,
+  "Refresh Idp Token": refreshIdpToken,
   "Set Custom Principal Claim": setCustomPrincipalClaim,
 };
 
@@ -75,7 +77,7 @@ async function setCustomPrincipalClaim() {
     claimValue
   );
   // refresh the token
-  await getToken(true);
+  await refreshIdpToken();
   state.walletId = claimValue === "CLEAR" ? null : claimValue;
   if (state.initCore && state.coreDeviceId) {
     const instance = getFireblocksNCWInstance(state.coreDeviceId);
@@ -87,10 +89,18 @@ async function setCustomPrincipalClaim() {
   }
 }
 
+function refreshIdpToken() {
+  return getToken(true);
+}
+
 async function getSummary() {
   if (!state.initEW && !state.initCore) {
-    console.log("Please initialize both Embedded Wallet and Core NCW first.");
+    console.log("Must initialize both Embedded Wallet and Core NCW");
     return;
+  }
+
+  if (!state.walletId) {
+    await assignWallet();
   }
 
   const accountData = await fetchAccountData();

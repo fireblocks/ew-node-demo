@@ -9,8 +9,6 @@ import chalk from "chalk";
 import { state } from "../app";
 
 export const Commands: Record<string, Function> = {
-  ["Set Device ID"]: setCoreDeviceId,
-
   // Wallet Management
   [chalk.bold.italic("Wallet Management")]: () => {},
   ["Approve Join Wallet Request"]: approveJoinWalletRequest,
@@ -168,11 +166,4 @@ async function getCoreInstance() {
     throw new Error("Failed to get core instance");
   }
   return instance;
-}
-
-async function setCoreDeviceId() {
-  const deviceId = await inputAny("deviceId", generateDeviceId());
-  setDeviceId(deviceId);
-  state.coreDeviceId = deviceId;
-  return deviceId;
 }

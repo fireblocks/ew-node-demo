@@ -95,7 +95,7 @@ export async function initEw() {
   state.initEW = true;
 }
 
-async function assignWallet() {
+export async function assignWallet() {
   const result = await ew.assignWallet();
   state.walletId = result.walletId;
   return result;
@@ -201,17 +201,21 @@ export async function initCore() {
   if (!ew) {
     throw "Embedded Wallet not initialized";
   }
+  const latestDeviceId = getDeviceId();
   let { deviceId } = await inquirer.prompt([
     {
       type: "input",
       name: "deviceId",
       message: "Enter device ID (leave blank to generate a random one)",
-      default: getDeviceId(),
+      default: latestDeviceId,
     },
   ]);
 
   if (!deviceId) {
-    deviceId = setDeviceId(generateDeviceId());
+    deviceId = generateDeviceId();
+  }
+  if (deviceId !== latestDeviceId) {
+    setDeviceId(deviceId);
   }
 
   if (getFireblocksNCWInstance(deviceId)) {

@@ -45,3 +45,23 @@ export function getSessionDetails(): string {
     `\n${yellowBlueLine}\n`
   );
 }
+
+export function printWalletSummary(
+  accountData: {
+    accountId: number;
+    assetId: string;
+    balance: string;
+    available: string;
+  }[],
+  keysState: {
+    keyId: string;
+    status: string;
+    backup: boolean;
+    algorithm: string;
+  }[]
+) {
+  console.log(chalk.bold.cyan("📊 Account Data:"));
+  console.table(accountData, ["accountId", "assetId", "balance", "available"]);
+  console.log(chalk.bold.cyan("🔑 Keys State:"));
+  console.table(keysState, ["algorithm", "keyId", "status", "backup"]);
+}
