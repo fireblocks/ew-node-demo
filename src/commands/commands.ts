@@ -94,9 +94,8 @@ function refreshIdpToken() {
 }
 
 async function getSummary() {
-  if (!state.initEW && !state.initCore) {
-    console.log("Must initialize both Embedded Wallet and Core NCW");
-    return;
+  if (!state.initEW || !state.initCore) {
+    throw "Must initialize both Embedded Wallet and Core NCW";
   }
 
   const promises: Promise<any>[] = [fetchAccountData(), fetchKeysState()];
