@@ -1,12 +1,14 @@
 import inquirer from "inquirer";
 import { getToken, setCustomClaim } from "../utils/firebase-auth";
-import { initCore, initEw } from "./ew";
+import { ew, initCore, initEw } from "./ew";
 import { state } from "../app";
 import { getWalletIds } from "../utils/storage-utils";
-import { askToSaveWalletId } from "../prompt";
+import { askToSaveWalletId, printWalletSummary } from "../prompt";
 import { getFireblocksNCWInstance } from "@fireblocks/ncw-js-sdk";
 
 export const Commands: Record<string, Function> = {
+  "Get Wallet Summary": getSummary,
+  "Init all": initAll,
   "Initialize Embedded Wallet": initEw,
   "Initialize Core NCW": initCore,
   "Set Custom Principal Claim": setCustomPrincipalClaim,
@@ -52,7 +54,7 @@ async function setCustomPrincipalClaim() {
   } else if (answers.claimValue === "SAVED") {
     const opts = getWalletIds();
     if (!opts) {
-      console.log("No saved wallet IDs found");
+      console.log("No saved wallet IDs found.");
       return;
     }
     const getKey = (opt: { name: string; uuid: string }) =>
@@ -83,4 +85,79 @@ async function setCustomPrincipalClaim() {
     state.initCore = false;
     state.coreDeviceId = null;
   }
+}
+
+async function getSummary() {
+  if (!state.initEW && !state.initCore) {
+    console.log("Please initialize both Embedded Wallet and Core NCW first.");
+    return;
+  }
+
+  const accountData = await fetchAccountData();
+  const keysState = await fetchKeysState();
+
+  printWalletSummary(accountData, keysState);
+}
+
+async function fetchAccountData() {
+  const accountData: {
+    accountId: number;
+    assetId: string;
+    balance: string;
+    available: string;
+  }[] = [];
+
+  const accounts = await ew.getAccounts();
+  await Promise.all(
+    accounts.data.map(async (account) => {
+      const accountAssets = await ew.getAssets(account.accountId);
+      await Promise.all(
+        accountAssets.data.map(async (asset) => {
+          const balance = await ew.getBalance(account.accountId, asset.id);
+          accountData.push({
+            accountId: account.accountId,
+            assetId: asset.id,
+            balance: balance.total,
+            available: balance.available,
+          });
+        })
+      );
+    })
+  );
+
+  return accountData;
+}
+
+async function fetchKeysState() {
+  const keysState: {
+    keyId: string;
+    status: string;
+    backup: boolean;
+    algorithm: string;
+  }[] = [];
+
+  const instance = getFireblocksNCWInstance(state.coreDeviceId);
+  const [keyStatus, backup] = await Promise.all([
+    instance.getKeysStatus(),
+    ew.getLatestBackup(),
+  ]);
+
+  for (const key of Object.values(keyStatus)) {
+    const algorithmWithoutCMP = key.algorithm.replace("CMP_", "");
+    keysState.push({
+      keyId: key.keyId,
+      status: key.keyStatus,
+      backup: backup.keys.some(
+        (backupKeys) => backupKeys.algorithm === algorithmWithoutCMP
+      ),
+      algorithm: algorithmWithoutCMP,
+    });
+  }
+
+  return keysState;
+}
+
+async function initAll() {
+  await initEw();
+  await initCore();
 }
