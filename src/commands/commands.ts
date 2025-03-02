@@ -99,12 +99,12 @@ async function getSummary() {
     return;
   }
 
+  const promises: Promise<any>[] = [fetchAccountData(), fetchKeysState()];
   if (!state.walletId) {
-    await assignWallet();
+    promises.push(assignWallet());
   }
 
-  const accountData = await fetchAccountData();
-  const keysState = await fetchKeysState();
+  const [accountData, keysState] = await Promise.all(promises);
 
   printWalletSummary(accountData, keysState);
 }
