@@ -1,7 +1,4 @@
-import {
-  generateDeviceId,
-  getFireblocksNCWInstance,
-} from "@fireblocks/ncw-js-sdk";
+import { getFireblocksNCWInstance } from "@fireblocks/ncw-js-sdk";
 import { getDeviceId, setDeviceId } from "../utils/storage-utils";
 import inquirer from "inquirer";
 import { inputAny } from "../utils/prompt-utils";
@@ -49,15 +46,17 @@ async function clearAllStorage() {
 }
 
 async function generateMPCKeys() {
+  const toTMPCAlgorithm = (algo: string) => algo.replace("MPC_", "MPC_CMP_");
   const instance = await getCoreInstance();
   const { algos } = await inquirer.prompt({
     type: "checkbox",
     name: "algos",
     message: "Select algorithms",
-    choices: ["MPC_CMP_ECDSA_SECP256K1", "MPC_CMP_EDDSA_ED25519"],
-    default: ["MPC_CMP_ECDSA_SECP256K1"],
+    choices: ["MPC_ECDSA_SECP256K1", "MPC_EDDSA_ED25519"],
+    default: ["MPC_ECDSA_SECP256K1"],
   });
-  return instance.generateMPCKeys(new Set(algos));
+
+  return instance.generateMPCKeys(new Set(algos.map(toTMPCAlgorithm)));
 }
 
 async function stopMpcDeviceSetup() {
