@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const devicePath = "storage/DEVICE_ID.txt";
+const devicePath = "storage/LATEST_DEVICE_ID.txt";
 const walletPath = "storage/WALLET_IDS.txt";
 
 export function getDeviceId() {

@@ -93,6 +93,16 @@ export async function initEw() {
     reporting: { enabled: false },
   });
   state.initEW = true;
+
+  const { shouldInitCore } = await inquirer.prompt({
+    type: "confirm",
+    name: "shouldInitCore",
+    message: "Initialize Core?",
+    default: true,
+  });
+  if (shouldInitCore) {
+    await initCore();
+  }
 }
 
 export async function assignWallet() {

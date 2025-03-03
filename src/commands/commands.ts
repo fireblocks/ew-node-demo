@@ -9,7 +9,6 @@ import { printWalletSummary } from "../utils/display";
 
 export const Commands: Record<string, Function> = {
   "Get Wallet Summary": getSummary,
-  "Init all": initAll,
   "Initialize Embedded Wallet": initEw,
   "Initialize Core NCW": initCore,
   "Refresh Idp Token": refreshIdpToken,
@@ -164,9 +163,4 @@ async function fetchKeysState() {
   }
 
   return keysState;
-}
-
-async function initAll() {
-  await initEw();
-  await initCore();
 }

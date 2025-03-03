@@ -60,8 +60,9 @@ export function printWalletSummary(
     algorithm: string;
   }[]
 ) {
+  accountData.sort((a, b) => Number(b.balance) - Number(a.balance));
   console.log(chalk.bold.cyan("📊 Account Data:"));
-  console.table(accountData, ["accountId", "assetId", "balance", "available"]);
+  console.table(accountData);
   console.log(chalk.bold.cyan("🔑 Keys State:"));
-  console.table(keysState, ["algorithm", "keyId", "status", "backup"]);
+  console.table(keysState);
 }
