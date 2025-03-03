@@ -1,14 +1,22 @@
 import chalk from "chalk";
-import { GeneralCommandsManager } from "./generalCommandsManager";
+import { UtilsManager } from "./utilsCommandsManager";
 import { CoreManager } from "./coreManager";
 import { EmbeddedWalletManager } from "./embeddedWalletManager";
 
 export class CommandsManager {
   constructor(
-    private readonly walletManager: GeneralCommandsManager,
+    private readonly walletManager: UtilsManager,
     private readonly coreManager: CoreManager,
     private readonly ewManager: EmbeddedWalletManager
   ) {}
+
+  get all(): Record<string, Function> {
+    return {
+      ...this.BaseCommands,
+      ...this.CoreCommands,
+      ...this.EmbeddedWalletCommands,
+    };
+  }
 
   get BaseCommands(): Record<string, Function> {
     return {

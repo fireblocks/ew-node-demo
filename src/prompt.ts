@@ -5,20 +5,24 @@ import inquirer from "inquirer";
 import { EmbeddedWalletManager } from "./managers/embeddedWalletManager";
 import { CoreManager } from "./managers/coreManager";
 import { CommandsManager } from "./managers/commandsManager";
+import { UtilsManager } from "./managers/utilsCommandsManager";
 
 inquirer.registerPrompt("search-list", require("inquirer-search-list"));
 const EXIT_COMMAND = chalk.bold.italic("EXIT");
 
 export class Prompt {
   private shouldExit = false;
-  private allCommands: Record<string, Function>;
+  private commandsManager: CommandsManager;
 
-  constructor(private readonly commands: CommandsManager) {
-    this.allCommands = {
-      ...commands.BaseCommands,
-      ...commands.EmbeddedWalletCommands,
-      ...commands.CoreCommands,
-    };
+  constructor() {
+    const embeddedWalletManager = new EmbeddedWalletManager();
+    const coreManager = new CoreManager();
+    const utilsManager = new UtilsManager(embeddedWalletManager);
+    this.commandsManager = new CommandsManager(
+      utilsManager,
+      coreManager,
+      embeddedWalletManager
+    );
   }
 
   async run() {
@@ -41,23 +45,23 @@ export class Prompt {
           await Prompt.askToSaveWalletId(EmbeddedWalletManager.walletId);
         }
       } else {
-        await this.execute(() => this.allCommands[command]());
+        await this.execute(() => this.commandsManager.all[command]());
       }
     }
   }
 
   private getChoices() {
-    const baseChoices = Object.keys(this.commands.BaseCommands);
+    const baseChoices = Object.keys(this.commandsManager.BaseCommands);
     const ewChoices = EmbeddedWalletManager.isInitialized
       ? [
           chalk.bold.yellow("========== EW Commands =========="),
-          ...Object.keys(this.commands.EmbeddedWalletCommands),
+          ...Object.keys(this.commandsManager.EmbeddedWalletCommands),
         ]
       : [];
     const coreChoices = CoreManager.isInitialized
       ? [
           chalk.bold.yellow("========== Core Commands =========="),
-          ...Object.keys(this.commands.CoreCommands),
+          ...Object.keys(this.commandsManager.CoreCommands),
         ]
       : [];
     return [...baseChoices, ...ewChoices, ...coreChoices, EXIT_COMMAND];
