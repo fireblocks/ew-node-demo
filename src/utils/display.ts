@@ -1,5 +1,6 @@
 import chalk from "chalk";
-import { state } from "../app";
+import { EmbeddedWalletManager } from "../commands/embeddedWalletManager";
+import { CoreManager } from "../commands/coreManager";
 
 const LINE = "=".repeat(80);
 
@@ -37,10 +38,14 @@ export function getSessionDetails(): string {
     " ".repeat(12),
     chalk.italic.bgBlue(`Session details (${process.env.ENV})\n`),
     `Init EW:   ${
-      state.initEW ? `✅\n Wallet ID: ${state.walletId ?? "___"}\n` : "❌"
+      EmbeddedWalletManager.isInitialized
+        ? `✅\n Wallet ID: ${EmbeddedWalletManager.walletId ?? "___"}\n`
+        : "❌"
     }\n`,
     `Init Core: ${
-      state.initCore ? `✅\n Device ID: ${state.coreDeviceId ?? "___"}` : "❌"
+      CoreManager.isInitialized
+        ? `✅\n Device ID: ${CoreManager.deviceId ?? "___"}`
+        : "❌"
     }`,
     `\n${yellowBlueLine}\n`
   );

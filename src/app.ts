@@ -1,11 +1,8 @@
-import { runPrompt } from "./prompt";
-
-export const state = {
-  initEW: false,
-  initCore: false,
-  walletId: undefined,
-  coreDeviceId: undefined,
-};
+import { CommandsManager } from "./commands/commandsManager";
+import { CoreManager } from "./commands/coreManager";
+import { EmbeddedWalletManager } from "./commands/embeddedWalletManager";
+import { WalletManager } from "./commands/general";
+import { Prompt } from "./prompt";
 
 process.on("uncaughtException", (error) => {
   if (error instanceof Error && error.name === "ExitPromptError") {
@@ -16,4 +13,14 @@ process.on("uncaughtException", (error) => {
   }
 });
 
-runPrompt();
+const embeddedWalletManager = new EmbeddedWalletManager();
+const coreManager = new CoreManager();
+const walletManager = new WalletManager(embeddedWalletManager);
+const commandsManager = new CommandsManager(
+  walletManager,
+  coreManager,
+  embeddedWalletManager
+);
+const prompt = new Prompt(commandsManager);
+
+prompt.run();
