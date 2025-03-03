@@ -2,9 +2,9 @@ import chalk from "chalk";
 import { getSessionDetails, logResult } from "./utils/display";
 import { addWalletId, getWalletIds } from "./utils/storage-utils";
 import inquirer from "inquirer";
-import { EmbeddedWalletManager } from "./commands/embeddedWalletManager";
-import { CoreManager } from "./commands/coreManager";
-import { CommandsManager } from "./commands/commandsManager";
+import { EmbeddedWalletManager } from "./managers/embeddedWalletManager";
+import { CoreManager } from "./managers/coreManager";
+import { CommandsManager } from "./managers/commandsManager";
 
 inquirer.registerPrompt("search-list", require("inquirer-search-list"));
 const EXIT_COMMAND = chalk.bold.italic("EXIT");

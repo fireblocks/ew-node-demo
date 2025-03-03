@@ -7,7 +7,7 @@ import { EmbeddedWalletManager } from "./embeddedWalletManager";
 import { CoreManager } from "./coreManager";
 import { Prompt } from "../prompt";
 
-export class WalletManager {
+export class GeneralCommandsManager {
   constructor(private readonly ewManager: EmbeddedWalletManager) {}
 
   setCustomPrincipalClaim = async () => {

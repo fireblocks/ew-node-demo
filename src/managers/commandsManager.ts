@@ -1,11 +1,11 @@
 import chalk from "chalk";
+import { GeneralCommandsManager } from "./generalCommandsManager";
 import { CoreManager } from "./coreManager";
 import { EmbeddedWalletManager } from "./embeddedWalletManager";
-import { WalletManager } from "./general";
 
 export class CommandsManager {
   constructor(
-    private readonly walletManager: WalletManager,
+    private readonly walletManager: GeneralCommandsManager,
     private readonly coreManager: CoreManager,
     private readonly ewManager: EmbeddedWalletManager
   ) {}

@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { EmbeddedWalletManager } from "../commands/embeddedWalletManager";
-import { CoreManager } from "../commands/coreManager";
+import { EmbeddedWalletManager } from "../managers/embeddedWalletManager";
+import { CoreManager } from "../managers/coreManager";
 
 const LINE = "=".repeat(80);
 
