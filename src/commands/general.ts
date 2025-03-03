@@ -10,7 +10,7 @@ import { Prompt } from "../prompt";
 export class WalletManager {
   constructor(private readonly ewManager: EmbeddedWalletManager) {}
 
-  async setCustomPrincipalClaim() {
+  setCustomPrincipalClaim = async () => {
     const answers = await inquirer.prompt([
       {
         type: "input",
@@ -75,13 +75,13 @@ export class WalletManager {
       CoreManager.isInitialized = false;
       CoreManager.deviceId = null;
     }
-  }
+  };
 
-  async refreshIdpToken() {
+  refreshIdpToken = async () => {
     return getToken(true);
-  }
+  };
 
-  async getSummary() {
+  getSummary = async () => {
     if (!EmbeddedWalletManager.isInitialized || !CoreManager.isInitialized) {
       throw "Must initialize both Embedded Wallet and Core NCW";
     }
@@ -97,9 +97,9 @@ export class WalletManager {
     const [accountData, keysState] = await Promise.all(promises);
 
     printWalletSummary(accountData, keysState);
-  }
+  };
 
-  private async fetchAccountData() {
+  private fetchAccountData = async () => {
     const accountData: {
       accountId: number;
       assetId: string;
@@ -131,9 +131,9 @@ export class WalletManager {
     );
 
     return accountData;
-  }
+  };
 
-  private async fetchKeysState() {
+  private fetchKeysState = async () => {
     const keysState: {
       keyId: string;
       status: string;
@@ -160,5 +160,5 @@ export class WalletManager {
     }
 
     return keysState;
-  }
+  };
 }

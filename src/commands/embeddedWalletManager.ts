@@ -27,7 +27,7 @@ export class EmbeddedWalletManager {
     return EmbeddedWalletManager.ew;
   }
 
-  async initEw() {
+  initEw = async () => {
     if (EmbeddedWalletManager.ew) {
       console.log("EW already initialized");
       return;
@@ -60,87 +60,87 @@ export class EmbeddedWalletManager {
     if (shouldInitCore) {
       await this.initCore();
     }
-  }
+  };
 
-  async assignWallet() {
+  assignWallet = async () => {
     const result = await EmbeddedWalletManager.ew.assignWallet();
     EmbeddedWalletManager.walletId = result.walletId;
     return result;
-  }
+  };
 
-  async getAccounts() {
+  getAccounts = async () => {
     return EmbeddedWalletManager.ew.getAccounts();
-  }
+  };
 
-  async getAddresses() {
+  getAddresses = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     return EmbeddedWalletManager.ew.getAddresses(accountId, assetId);
-  }
+  };
 
-  async createAccount() {
+  createAccount = async () => {
     return EmbeddedWalletManager.ew.createAccount();
-  }
+  };
 
-  async getAsset() {
+  getAsset = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     return EmbeddedWalletManager.ew.getAsset(Number(accountId), assetId);
-  }
+  };
 
-  async getBalance() {
+  getBalance = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     return EmbeddedWalletManager.ew.getBalance(accountId, assetId);
-  }
+  };
 
-  async refreshBalance() {
+  refreshBalance = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     return EmbeddedWalletManager.ew.refreshBalance(accountId, assetId);
-  }
+  };
 
-  async getDevice() {
+  getDevice = async () => {
     const { deviceId } = await input("deviceId");
     return EmbeddedWalletManager.ew.getDevice(deviceId);
-  }
+  };
 
-  async getLatestBackup() {
+  getLatestBackup = async () => {
     return EmbeddedWalletManager.ew.getLatestBackup();
-  }
+  };
 
-  async getNFT() {
+  getNFT = async () => {
     const id = await inputAny("NFT ID");
     return EmbeddedWalletManager.ew.getNFT(id);
-  }
+  };
 
-  async getOwnedNFTs() {
+  getOwnedNFTs = async () => {
     return EmbeddedWalletManager.ew.getOwnedNFTs();
-  }
+  };
 
-  async listOwnedCollections() {
+  listOwnedCollections = async () => {
     return EmbeddedWalletManager.ew.listOwnedCollections();
-  }
+  };
 
-  async listOwnedAssets() {
+  listOwnedAssets = async () => {
     return EmbeddedWalletManager.ew.listOwnedAssets();
-  }
+  };
 
-  async getSupportedAssets() {
+  getSupportedAssets = async () => {
     return EmbeddedWalletManager.ew.getSupportedAssets();
-  }
+  };
 
-  async getAssets() {
+  getAssets = async () => {
     const { accountId } = await input("accountId");
     return EmbeddedWalletManager.ew.getAssets(accountId);
-  }
+  };
 
-  async addAsset() {
+  addAsset = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     return EmbeddedWalletManager.ew.addAsset(Number(accountId), assetId);
-  }
+  };
 
-  async getWeb3Connections() {
+  getWeb3Connections = async () => {
     return EmbeddedWalletManager.ew.getWeb3Connections();
-  }
+  };
 
-  async createWeb3Connection() {
+  createWeb3Connection = async () => {
     const { accountId } = await input("accountId");
     const uri = await inputAny("uri");
     return EmbeddedWalletManager.ew.createWeb3Connection({
@@ -148,9 +148,9 @@ export class EmbeddedWalletManager {
       ncwAccountId: accountId,
       uri,
     });
-  }
+  };
 
-  async submitWeb3Connection() {
+  submitWeb3Connection = async () => {
     const connectionId = await inputAny("connectionId");
     const approve = await inquirer.prompt({
       type: "confirm",
@@ -159,14 +159,14 @@ export class EmbeddedWalletManager {
     });
 
     return EmbeddedWalletManager.ew.submitWeb3Connection(connectionId, approve);
-  }
+  };
 
-  async removeWeb3Connection() {
+  removeWeb3Connection = async () => {
     const connectionId = await inputAny("connectionId");
     return EmbeddedWalletManager.ew.removeWeb3Connection(connectionId);
-  }
+  };
 
-  async initCore() {
+  initCore = async () => {
     if (!EmbeddedWalletManager.ew) {
       throw "Embedded Wallet not initialized";
     }
@@ -205,14 +205,14 @@ export class EmbeddedWalletManager {
     }
     CoreManager.isInitialized = true;
     CoreManager.deviceId = deviceId;
-  }
+  };
 
-  async getTransaction() {
+  getTransaction = async () => {
     const txId = await inputAny("txId");
     return EmbeddedWalletManager.ew.getTransaction(txId);
-  }
+  };
 
-  async getLatestTxs() {
+  getLatestTxs = async () => {
     const [incoming, outgoing] = await Promise.all([
       EmbeddedWalletManager.ew.getTransactions({
         incoming: true,
@@ -237,14 +237,14 @@ export class EmbeddedWalletManager {
         destination: tx.destination,
         lastUpdated: new Date(tx.lastUpdated).toLocaleString(),
       }));
-  }
+  };
 
-  async cancelTransaction() {
+  cancelTransaction = async () => {
     const txId = await inputAny("txId");
     return EmbeddedWalletManager.ew.cancelTransaction(txId);
-  }
+  };
 
-  async estimateTransactionFee() {
+  estimateTransactionFee = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     const amount = await inputAny("amount");
     const destination = await this.promptDestination();
@@ -256,9 +256,9 @@ export class EmbeddedWalletManager {
       destination,
       amount,
     });
-  }
+  };
 
-  async getTransactions() {
+  getTransactions = async () => {
     const { direction } = await inquirer.prompt([
       {
         type: "list",
@@ -275,9 +275,9 @@ export class EmbeddedWalletManager {
       filter["outgoing"] = true;
     }
     return EmbeddedWalletManager.ew.getTransactions(filter as any);
-  }
+  };
 
-  async createTransactionByJsonInput() {
+  createTransactionByJsonInput = async () => {
     const { txRequestJson } = await inquirer.prompt({
       type: "editor",
       name: "txRequestJson",
@@ -310,9 +310,9 @@ export class EmbeddedWalletManager {
     return EmbeddedWalletManager.ew.createTransaction(
       JSON.parse(txRequestJson)
     );
-  }
+  };
 
-  async createTransaction() {
+  createTransaction = async () => {
     const { accountId, assetId } = await input("accountId", "assetId");
     const amount = await inputAny("amount");
     const destination = await this.promptDestination();
@@ -324,9 +324,9 @@ export class EmbeddedWalletManager {
       destination,
       amount,
     });
-  }
+  };
 
-  async promptDestination(): Promise<DestinationTransferPeerPath> {
+  promptDestination = async (): Promise<DestinationTransferPeerPath> => {
     const { destinationType } = await inquirer.prompt([
       {
         type: "list",
@@ -370,5 +370,5 @@ export class EmbeddedWalletManager {
     }
 
     return destination;
-  }
+  };
 }

@@ -7,26 +7,26 @@ import chalk from "chalk";
 export class CoreManager {
   public static isInitialized: boolean = false;
   public static deviceId: string;
-  private async getCoreInstance() {
+  private getCoreInstance = async () => {
     const deviceId = CoreManager.deviceId ?? getDeviceId();
     const instance = getFireblocksNCWInstance(deviceId);
     if (!instance) {
       throw new Error("Failed to get core instance");
     }
     return instance;
-  }
+  };
 
-  public async dispose() {
+  public dispose = async () => {
     const instance = await this.getCoreInstance();
     return instance.dispose();
-  }
+  };
 
-  public async clearAllStorage() {
+  public clearAllStorage = async () => {
     const instance = await this.getCoreInstance();
     return instance.clearAllStorage();
-  }
+  };
 
-  public async generateMPCKeys() {
+  public generateMPCKeys = async () => {
     const toTMPCAlgorithm = (algo: string) => algo.replace("MPC_", "MPC_CMP_");
     const instance = await this.getCoreInstance();
     const { algos } = await inquirer.prompt({
@@ -38,30 +38,30 @@ export class CoreManager {
     });
 
     return instance.generateMPCKeys(new Set(algos.map(toTMPCAlgorithm)));
-  }
+  };
 
-  public async stopMpcDeviceSetup() {
+  public stopMpcDeviceSetup = async () => {
     const instance = await this.getCoreInstance();
     return instance.stopMpcDeviceSetup();
-  }
+  };
 
-  public async signTransaction() {
+  public signTransaction = async () => {
     const instance = await this.getCoreInstance();
     const txId = await inputAny("transaction ID");
     return instance.signTransaction(txId);
-  }
+  };
 
-  public async stopInProgressSignTransaction() {
+  public stopInProgressSignTransaction = async () => {
     const instance = await this.getCoreInstance();
     return instance.stopInProgressSignTransaction();
-  }
+  };
 
-  public async getInProgressSigningTxId() {
+  public getInProgressSigningTxId = async () => {
     const instance = await this.getCoreInstance();
     return instance.getInProgressSigningTxId();
-  }
+  };
 
-  public async backupKeys() {
+  public backupKeys = async () => {
     const instance = await this.getCoreInstance();
     const passphrase = await inputAny(
       "passphrase",
@@ -72,48 +72,48 @@ export class CoreManager {
       process.env.DEFAULT_PASSPHRASE_ID
     );
     return instance.backupKeys(passphrase, passphraseId);
-  }
+  };
 
-  public async recoverKeys() {
+  public recoverKeys = async () => {
     const instance = await this.getCoreInstance();
     const passphrase = await inputAny(
       "passphrase",
       process.env.DEFAULT_PASSPHRASE
     );
     return instance.recoverKeys(() => Promise.resolve(passphrase));
-  }
+  };
 
-  public async requestJoinExistingWallet() {
+  public requestJoinExistingWallet = async () => {
     const instance = await this.getCoreInstance();
     return instance.requestJoinExistingWallet({
       onRequestId: (requestId) => {
         console.log(chalk.cyan(`Request ID: ${requestId}`));
       },
     });
-  }
+  };
 
-  public async approveJoinWalletRequest() {
+  public approveJoinWalletRequest = async () => {
     const instance = await this.getCoreInstance();
     const requestId = await inputAny("request ID");
     return instance.approveJoinWalletRequest(requestId);
-  }
+  };
 
-  public async stopJoinWallet() {
+  public stopJoinWallet = async () => {
     const instance = await this.getCoreInstance();
     return instance.stopJoinWallet();
-  }
+  };
 
-  public async takeover() {
+  public takeover = async () => {
     const instance = await this.getCoreInstance();
     return instance.takeover();
-  }
+  };
 
-  // public async exportFullKeys() {
+  // public exportFullKeys = async () => {
   //   const instance = await this.getCoreInstance();
   //   return instance.exportFullKeys();
-  // }
+  // };
 
-  public async deriveAssetKey() {
+  public deriveAssetKey = async () => {
     const instance = await this.getCoreInstance();
     const extendedPrivateKey = await inputAny("extended private key");
     const coinType = await inputAny("coin type");
@@ -127,15 +127,15 @@ export class CoreManager {
       Number(change),
       Number(index)
     );
-  }
+  };
 
-  public async getKeysStatus() {
+  public getKeysStatus = async () => {
     const instance = await this.getCoreInstance();
     return instance.getKeysStatus();
-  }
+  };
 
-  public async getPhysicalDeviceId() {
+  public getPhysicalDeviceId = async () => {
     const instance = await this.getCoreInstance();
     return instance.getPhysicalDeviceId();
-  }
+  };
 }
