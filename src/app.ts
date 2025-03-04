@@ -1,6 +1,13 @@
-import { Prompt } from "./prompt";
+import { CLI } from "./cli";
 
-new Prompt().run();
+async function main() {
+  const cli = new CLI();
+  await cli.run();
+}
+
+main().then(() => {
+  process.exit(0);
+});
 
 process.on("uncaughtException", (error) => {
   if (error instanceof Error && error.name === "ExitPromptError") {

@@ -5,10 +5,14 @@ import { printWalletSummary } from "../utils/display";
 import { setCustomClaim, getToken } from "../utils/firebase-auth";
 import { EmbeddedWalletManager } from "./embeddedWalletManager";
 import { CoreManager } from "./coreManager";
-import { Prompt } from "../prompt";
+import { WalletStorageManager } from "./walletStorageManager";
 
 export class UtilsManager {
-  constructor(private readonly ewManager: EmbeddedWalletManager) {}
+  private readonly walletStorageManager: WalletStorageManager;
+
+  constructor(private readonly ewManager: EmbeddedWalletManager) {
+    this.walletStorageManager = new WalletStorageManager();
+  }
 
   setCustomPrincipalClaim = async () => {
     const answers = await inquirer.prompt([
@@ -36,7 +40,7 @@ export class UtilsManager {
         },
       ]);
       claimValue = userInput;
-      await Prompt.askToSaveWalletId(claimValue);
+      await this.walletStorageManager.promptAndSaveWallet(claimValue);
     } else if (answers.claimValue === "RANDOM") {
       claimValue = crypto.randomUUID();
     } else if (answers.claimValue === "CLEAR") {

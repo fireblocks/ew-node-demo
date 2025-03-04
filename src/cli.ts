@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { getSessionDetails, logResult } from "./utils/display";
-import { addWalletId, getWalletIds } from "./utils/storage-utils";
+import { WalletStorageManager } from "./managers/walletStorageManager";
 import inquirer from "inquirer";
 import { EmbeddedWalletManager } from "./managers/embeddedWalletManager";
 import { CoreManager } from "./managers/coreManager";
@@ -10,9 +10,10 @@ import { UtilsManager } from "./managers/utilsCommandsManager";
 inquirer.registerPrompt("search-list", require("inquirer-search-list"));
 const EXIT_COMMAND = chalk.bold.italic("EXIT");
 
-export class Prompt {
+export class CLI {
   private shouldExit = false;
   private commandsManager: CommandsManager;
+  private walletStorageManager: WalletStorageManager;
 
   constructor() {
     const embeddedWalletManager = new EmbeddedWalletManager();
@@ -23,6 +24,7 @@ export class Prompt {
       coreManager,
       embeddedWalletManager
     );
+    this.walletStorageManager = new WalletStorageManager();
   }
 
   async run() {
@@ -42,7 +44,9 @@ export class Prompt {
       if (command === EXIT_COMMAND) {
         this.shouldExit = true;
         if (EmbeddedWalletManager.walletId) {
-          await Prompt.askToSaveWalletId(EmbeddedWalletManager.walletId);
+          await this.walletStorageManager.promptAndSaveWallet(
+            EmbeddedWalletManager.walletId
+          );
         }
       } else {
         await this.execute(() => this.commandsManager.all[command]());
@@ -74,42 +78,6 @@ export class Prompt {
       return result;
     } catch (error) {
       logResult(error, false);
-    }
-  }
-
-  public static async askToSaveWalletId(walletId: string) {
-    const wallets = getWalletIds();
-
-    if (wallets?.find((opt) => opt.uuid === walletId)) {
-      return;
-    }
-    const { save } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "save",
-        message: "Save this wallet ID?",
-      },
-    ]);
-    if (save) {
-      let walletName: string;
-      let nameExists: boolean;
-      do {
-        const promptRes = await inquirer.prompt([
-          {
-            type: "input",
-            name: "walletName",
-            message: "Enter the wallet name:",
-          },
-        ]);
-        walletName = (promptRes.walletName as string).trim().replace(",", "_");
-        nameExists = wallets?.some((opt) => opt.name === walletName);
-        if (nameExists) {
-          console.log(
-            "Wallet name already exists. Please enter a different name."
-          );
-        }
-      } while (nameExists);
-      addWalletId(walletName, walletId);
     }
   }
 }
