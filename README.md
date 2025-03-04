@@ -1,8 +1,8 @@
 # EW Node Demo
 
-EW Node Demo is a simple command-line interface (CLI) tool that allows users to execute commands and receive output directly in the terminal.
-- Using Firebase as auth-provider
-- Using FS storage provider
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+EW Node Demo is a command-line interface (CLI) tool for managing embedded wallets. It provides a simple and intuitive interface for executing commands and managing wallet operations through Fireblocks' infrastructure.
 
 ## Features
 
@@ -13,7 +13,7 @@ EW Node Demo is a simple command-line interface (CLI) tool that allows users to 
 
 ## Installation
 
-To install the CLI tool, clone the repository and install the dependencies:
+To install the CLI tool:
 
 ```bash
 git clone https://github.com/fireblocks/ew-node-demo.git
@@ -23,16 +23,23 @@ yarn install
 
 ## Setup
 
-Rename the `.env.example` file to `.env`, the `secrets.example` folder to `secrets` and fill in the required variables. 
+1. Configure environment variables:
 
-```bash
-mv .env.example .env
-mv secrets.example secrets
-```
+   ```bash
+   mv .env.example .env
+   ```
+
+   Edit `.env` with your configuration.
+
+2. Set up secrets:
+   ```bash
+   mv secrets.example secrets
+   ```
+   Update the secrets files with your credentials.
 
 ## Usage
 
-After installation, you can run the CLI tool using the following command:
+Start the CLI tool:
 
 ```bash
 yarn start
@@ -40,6 +47,27 @@ yarn start
 
 You will be prompted to choose a command to execute.
 
+## Documentation
+
+- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute
+- [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards
+- [Security Policy](SECURITY.md) - Security practices and reporting
+
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or features.
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on:
+
+- Code of Conduct
+- Development process
+- Pull request process
+- Coding standards
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+- Open an issue for bugs
+- See documentation for help
+- Contact support team for assistance
