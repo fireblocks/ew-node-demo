@@ -4,7 +4,7 @@ import { EmbeddedWalletManager } from "./embeddedWalletManager";
 import { Commands, CommandFlags } from "../utils/commands";
 import { createTitle } from "../utils/display";
 
-type CommandFunction = () => Promise<any>;
+type CommandFunction = () => Promise<unknown>;
 type CommandRecord = Record<string, CommandFunction>;
 
 export class CommandsManager {
@@ -37,10 +37,8 @@ export class CommandsManager {
     return {
       // Wallet Management
       ...createTitle("Wallet Management"),
-      [Commands.APPROVE_JOIN_WALLET_REQUEST]:
-        this.coreManager.approveJoinWalletRequest,
-      [Commands.REQUEST_JOIN_EXISTING_WALLET]:
-        this.coreManager.requestJoinExistingWallet,
+      [Commands.APPROVE_JOIN_WALLET_REQUEST]: this.coreManager.approveJoinWalletRequest,
+      [Commands.REQUEST_JOIN_EXISTING_WALLET]: this.coreManager.requestJoinExistingWallet,
       [Commands.STOP_JOIN_WALLET]: this.coreManager.stopJoinWallet,
       [Commands.TAKEOVER]: this.coreManager.takeover,
 
@@ -56,10 +54,8 @@ export class CommandsManager {
       // Transaction Management
       ...createTitle("Transaction Management"),
       [Commands.SIGN_TRANSACTION]: this.coreManager.signTransaction,
-      [Commands.STOP_IN_PROGRESS_SIGN_TRANSACTION]:
-        this.coreManager.stopInProgressSignTransaction,
-      [Commands.GET_IN_PROGRESS_SIGNING_TX_ID]:
-        this.coreManager.getInProgressSigningTxId,
+      [Commands.STOP_IN_PROGRESS_SIGN_TRANSACTION]: this.coreManager.stopInProgressSignTransaction,
+      [Commands.GET_IN_PROGRESS_SIGNING_TX_ID]: this.coreManager.getInProgressSigningTxId,
 
       // General
       ...createTitle("General"),
@@ -96,14 +92,11 @@ export class CommandsManager {
       [Commands.SUBMIT_WEB3_CONNECTION]: this.ewManager.submitWeb3Connection,
       ...createTitle("Transactions"),
       [Commands.CREATE_TRANSACTION]: this.ewManager.createTransaction,
-      [Commands.CREATE_AND_SIGN_TRANSACTION]:
-        this.ewManager.createAndSignTransaction,
-      [Commands.CREATE_TRANSACTION_BY_JSON]:
-        this.ewManager.createTransactionByJsonInput,
+      [Commands.CREATE_AND_SIGN_TRANSACTION]: this.ewManager.createAndSignTransaction,
+      [Commands.CREATE_TRANSACTION_BY_JSON]: this.ewManager.createTransactionByJsonInput,
       [Commands.GET_LATEST_TRANSACTIONS]: this.ewManager.getLatestTxs,
       [Commands.CANCEL_TRANSACTION]: this.ewManager.cancelTransaction,
-      [Commands.ESTIMATE_TRANSACTION_FEE]:
-        this.ewManager.estimateTransactionFee,
+      [Commands.ESTIMATE_TRANSACTION_FEE]: this.ewManager.estimateTransactionFee,
       [Commands.GET_TRANSACTION_BY_ID]: this.ewManager.getTransaction,
       [Commands.GET_TRANSACTIONS]: this.ewManager.getTransactions,
     };

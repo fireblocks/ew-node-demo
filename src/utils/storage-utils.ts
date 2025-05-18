@@ -29,8 +29,8 @@ export function getWalletIds() {
   return content
     ? content
         .split("\n")
-        .filter((line) => !line.startsWith("#"))
-        .map((line) => {
+        .filter(line => !line.startsWith("#"))
+        .map(line => {
           const [name, uuid] = line.split(",");
           return { name, uuid };
         })

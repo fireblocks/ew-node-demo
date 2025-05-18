@@ -1,11 +1,13 @@
 # Pull Request
 
 ## Description
+
 Please include a summary of the change and which issue is fixed. Include relevant motivation and context.
 
 Fixes # (issue)
 
 ## Type of change
+
 Please delete options that are not relevant.
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
@@ -14,6 +16,7 @@ Please delete options that are not relevant.
 - [ ] Documentation update
 
 ## Checklist:
+
 Before submitting your PR, please review the following checklist:
 
 - [ ] I have performed a self-review of my own code
@@ -25,7 +28,9 @@ Before submitting your PR, please review the following checklist:
 - [ ] Any dependent changes have been merged and published in downstream modules
 
 ## Additional context
+
 Add any other context about the pull request here.
 
 ## Testing Instructions
+
 Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce.

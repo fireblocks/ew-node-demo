@@ -1,0 +1,55 @@
+### RENTBLOCKS ###
+Firebase UID: e8BDnRAH2abXWr22sTwrDPfotsz2
+
+# no claim:
+passphraseId: 82757fdf-13e5-44c3-9b10-9f2d1fd9687e
+Wallet ID: fca63ff2-c58b-8292-b130-4aab04d0ccd3
+Device ID: 6c3da901-b7f8-4d2a-8592-a3eef153e727
+
+
+
+### DEV9 ###
+Firebase UID: h8CnWw8wTMMToAtVKKYr5sZfU182
+
+# no claim:
+passphraseId: 82757fdf-13e5-44c3-9b10-9f2d1fd9687e
+Wallet ID: 3b062281-e882-8013-b4fa-9e22ab5ef3d4
+Device ID: 93ad7ca2-3cc2-4677-9eb4-797695bff579
+
+
+
+### SANDBOX ###
+Firebase UID: h8CnWw8wTMMToAtVKKYr5sZfU182
+
+# web-demo
+device ID: 2e8eb06d-bcf9-42cc-97d0-be1c6e6c6a4a
+wallet ID: 573c3597-eb98-4621-a54d-cc31eb566646
+
+# no claim:
+passphraseId: 82757fdf-13e5-44c3-9b10-9f2d1fd9687e
+Wallet ID: cc7163b0-ebbb-87c8-9a11-68ddffcec440
+Device ID: d042f3ee-5781-4980-92f5-c8f4864efa2a
+
+# wallet_claim: 10e3c476-ca2b-4a14-a614-d759d515de81
+passphraseId: c07774bf-e5e5-43cc-a896-526c3c52749c
+Wallet ID: 10e3c476-ca2b-4a14-a614-d759d515de81
+Device ID: f22f34d1-0e7b-45a2-af1b-b8eaffd1aea6
+
+
+
+### Prod ###
+Firebase UID: yLOtBwecWAN9GZ6mNKusnY4lqqy2
+
+# web-demo
+device ID: 6e152b45-13a1-430b-9d10-8c882d57a75e
+wallet ID: d47f554c-cb33-424e-b44b-675a2f028cc0
+
+# no claim:
+passphraseId: 21a869ab-7ba0-438a-8005-256a7c8c7021
+Wallet ID: 8c857a17-6d16-8c2a-905f-9900eb761f84
+Device ID: cf896d0b-bfff-45db-aa38-3e87fa6b8cbf
+
+# wallet_claim: 10e3c476-ca2b-4a14-a614-d759d515de81
+passphraseId: 82757fdf-13e5-44c3-9b10-9f2d1fd9687e
+Wallet ID: 10e3c476-ca2b-4a14-a614-d759d515de81
+Device ID: 1f0374f1-061e-47ce-8395-f5b341f27261

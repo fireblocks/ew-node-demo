@@ -19,11 +19,7 @@ export class CLI {
     const embeddedWalletManager = new EmbeddedWalletManager();
     const coreManager = new CoreManager();
     const utilsManager = new UtilsManager(embeddedWalletManager);
-    this.commandsManager = new CommandsManager(
-      utilsManager,
-      coreManager,
-      embeddedWalletManager
-    );
+    this.commandsManager = new CommandsManager(utilsManager, coreManager, embeddedWalletManager);
     this.walletStorageManager = new WalletStorageManager();
   }
 
@@ -46,9 +42,7 @@ export class CLI {
       if (command === EXIT_COMMAND) {
         this.shouldExit = true;
         if (EmbeddedWalletManager.walletId) {
-          await this.walletStorageManager.promptAndSaveWallet(
-            EmbeddedWalletManager.walletId
-          );
+          await this.walletStorageManager.promptAndSaveWallet(EmbeddedWalletManager.walletId);
         }
       } else {
         await this._execute(() => this.commandsManager.All[command]());
@@ -58,9 +52,7 @@ export class CLI {
 
   private async _init() {
     if (process.argv.includes(CommandFlags.INIT)) {
-      await this._execute(() =>
-        this.commandsManager.Flags[CommandFlags.INIT]()
-      );
+      await this._execute(() => this.commandsManager.Flags[CommandFlags.INIT]());
     }
   }
 

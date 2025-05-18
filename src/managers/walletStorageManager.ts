@@ -27,13 +27,9 @@ export class WalletStorageManager {
           },
         ]);
         walletName = (promptRes.walletName as string).trim().replace(",", "_");
-        nameExists = this.getStoredWallets()?.some(
-          (opt) => opt.name === walletName
-        );
+        nameExists = this.getStoredWallets()?.some(opt => opt.name === walletName);
         if (nameExists) {
-          console.log(
-            "Wallet name already exists. Please enter a different name."
-          );
+          console.log("Wallet name already exists. Please enter a different name.");
         }
       } while (nameExists);
 
@@ -47,7 +43,7 @@ export class WalletStorageManager {
 
   private isWalletStored(walletId: string) {
     const wallets = this.getStoredWallets();
-    return wallets?.some((wallet) => wallet.uuid === walletId) ?? false;
+    return wallets?.some(wallet => wallet.uuid === walletId) ?? false;
   }
 
   private saveWalletWithName(name: string, walletId: string) {

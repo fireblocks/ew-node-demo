@@ -65,10 +65,7 @@ export class CoreManager {
   public backupKeys = async () => {
     const instance = await this.getCoreInstance();
     const passphrase = await inputAny("passphrase", ENV.DEFAULT_PASSPHRASE);
-    const passphraseId = await inputAny(
-      "passphrase ID (uuid)",
-      ENV.DEFAULT_PASSPHRASE_ID
-    );
+    const passphraseId = await inputAny("passphrase ID (uuid)", ENV.DEFAULT_PASSPHRASE_ID);
     return instance.backupKeys(passphrase, passphraseId);
   };
 
@@ -81,7 +78,7 @@ export class CoreManager {
   public requestJoinExistingWallet = async () => {
     const instance = await this.getCoreInstance();
     return instance.requestJoinExistingWallet({
-      onRequestId: (requestId) => {
+      onRequestId: requestId => {
         console.log(chalk.cyan(`Request ID: ${requestId}`));
       },
     });

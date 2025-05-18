@@ -10,7 +10,7 @@ export function createTitle(text: string) {
   return { [chalk.bold.italic(text)]: async () => void 0 };
 }
 
-export function logResult(result: any, success: boolean = true) {
+export function logResult(result: unknown, success: boolean = true) {
   switch (true) {
     case result instanceof Set:
       result = Array.from(result);
@@ -27,14 +27,7 @@ export function logResult(result: any, success: boolean = true) {
   const message = `Command ${success ? "executed successfully" : "failed"}`;
   const color = success ? chalk.green : chalk.red;
 
-  console.log(
-    color(
-      `\n${message}`,
-      `\n${LINE}\n`,
-      JSON.stringify(result, null, 2),
-      `\n${LINE}\n`
-    )
-  );
+  console.log(color(`\n${message}`, `\n${LINE}\n`, JSON.stringify(result, null, 2), `\n${LINE}\n`));
 }
 
 export function getSessionDetails(): string {
@@ -49,9 +42,7 @@ export function getSessionDetails(): string {
         : "❌"
     }\n`,
     `Init Core: ${
-      CoreManager.isInitialized
-        ? `✅\n Device ID: ${CoreManager.deviceId ?? "___"}`
-        : "❌"
+      CoreManager.isInitialized ? `✅\n Device ID: ${CoreManager.deviceId ?? "___"}` : "❌"
     }`,
     `\n${yellowBlueLine}\n`
   );
@@ -71,13 +62,16 @@ export function printWalletSummary(
     algorithm: string;
   }[]
 ) {
-  const groupedAccounts = accountData.reduce((acc, account) => {
-    if (!acc[account.accountId]) {
-      acc[account.accountId] = [];
-    }
-    acc[account.accountId].push(account);
-    return acc;
-  }, {} as Record<number, typeof accountData>);
+  const groupedAccounts = accountData.reduce(
+    (acc, account) => {
+      if (!acc[account.accountId]) {
+        acc[account.accountId] = [];
+      }
+      acc[account.accountId].push(account);
+      return acc;
+    },
+    {} as Record<number, typeof accountData>
+  );
 
   Object.entries(groupedAccounts).forEach(([accountId, accounts]) => {
     console.log(chalk.bold.cyan(`📊 Account ${accountId}`));
@@ -93,7 +87,7 @@ export const EXIT_COMMAND = chalk.bold.italic("EXIT");
 export function printEvent(type: TEvent["type"], data: unknown) {
   const formattedData = JSON.stringify(data, null, 2)
     .split("\n")
-    .map((line) => chalk.cyan("│ ") + chalk.white(line))
+    .map(line => chalk.cyan("│ ") + chalk.white(line))
     .join("\n");
 
   console.log(`

@@ -82,28 +82,18 @@ export async function getToken(forceNew = false): Promise<string> {
   return TokenData.idToken;
 }
 
-export async function getCustomClaim(
-  uid: string,
-  claimKey: string
-): Promise<string | null> {
+export async function getCustomClaim(uid: string, claimKey: string): Promise<string | null> {
   try {
     const user = await admin.auth().getUser(uid);
     const customClaims = user.customClaims || {};
     return customClaims[claimKey] || null;
   } catch (error) {
-    console.error(
-      `Error getting custom claim for user '${uid}' [${claimKey}]`,
-      error
-    );
+    console.error(`Error getting custom claim for user '${uid}' [${claimKey}]`, error);
     return null;
   }
 }
 
-export async function setCustomClaim(
-  uid: string,
-  claimKey: string,
-  claimValue: string
-) {
+export async function setCustomClaim(uid: string, claimKey: string, claimValue: string) {
   try {
     // Fetch current custom claims
     const user = await admin.auth().getUser(uid);
@@ -111,16 +101,12 @@ export async function setCustomClaim(
 
     // Update claims
     const updatedClaims =
-      claimValue === "CLEAR"
-        ? null
-        : { ...currentClaims, [claimKey]: claimValue };
+      claimValue === "CLEAR" ? null : { ...currentClaims, [claimKey]: claimValue };
     await admin.auth().setCustomUserClaims(uid, updatedClaims);
 
     console.log(
       `Custom claim for user '${uid}' has been ${
-        claimValue === "CLEAR"
-          ? "cleared"
-          : `set to [${claimKey}]: '${claimValue}'`
+        claimValue === "CLEAR" ? "cleared" : `set to [${claimKey}]: '${claimValue}'`
       }`
     );
   } catch (error) {

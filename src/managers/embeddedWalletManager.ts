@@ -1,4 +1,8 @@
-import { EmbeddedWallet, IPaginatedResponse } from "@fireblocks/embedded-wallet-sdk";
+import {
+  EmbeddedWallet,
+  IGetTransactionsParams,
+  IPaginatedResponse,
+} from "@fireblocks/embedded-wallet-sdk";
 import {
   ConsoleLoggerFactory,
   generateDeviceId,
@@ -8,17 +12,24 @@ import {
 import { EventsHandler } from "../utils/eventsHandler";
 import inquirer from "inquirer";
 import { getToken } from "../utils/firebase-auth";
-import {
-  FileSystemStorageProvider,
-  FileSystemSecureStorageProvider,
-} from "../utils/sdk-storage";
+import { FileSystemStorageProvider, FileSystemSecureStorageProvider } from "../utils/sdk-storage";
 import { getDeviceId, setDeviceId } from "../utils/storage-utils";
+import { input, inputAccountAndAssetWithChoices, inputAny } from "../utils/prompt-utils";
 import {
-  input,
-  inputAccountAndAssetWithChoices,
-  inputAny,
-} from "../utils/prompt-utils";
-import { AmountInfo, CreateConnectionResponse, CreateTransactionResponse, DestinationTransferPeerPath, DestinationTransferPeerPathResponse, EstimatedTransactionFeeResponse, GetTransactionOperation, SessionDTO, SourceTransferPeerPathResponse, TokenOwnershipResponse, TokenResponse, TransactionResponse } from "@fireblocks/ts-sdk";
+  AmountInfo,
+  CreateConnectionResponse,
+  CreateNcwConnectionRequestFeeLevelEnum,
+  CreateTransactionResponse,
+  DestinationTransferPeerPath,
+  DestinationTransferPeerPathResponse,
+  EstimatedTransactionFeeResponse,
+  GetTransactionOperation,
+  SessionDTO,
+  SourceTransferPeerPathResponse,
+  TokenOwnershipResponse,
+  TokenResponse,
+  TransactionResponse,
+} from "@fireblocks/ts-sdk";
 import { CoreManager } from "./coreManager";
 import { ENV } from "../config";
 import { NCW } from "fireblocks-sdk";
@@ -165,7 +176,7 @@ export class EmbeddedWalletManager {
     const { accountId } = await input("accountId");
     const uri = await inputAny("uri");
     return EmbeddedWalletManager.ew.createWeb3Connection({
-      feeLevel: "MEDIUM" as any,
+      feeLevel: CreateNcwConnectionRequestFeeLevelEnum.Medium,
       ncwAccountId: accountId,
       uri,
     });
@@ -218,9 +229,7 @@ export class EmbeddedWalletManager {
         deviceId,
         eventsHandler: new EventsHandler(),
         storageProvider: new FileSystemStorageProvider("storage/public"),
-        secureStorageProvider: new FileSystemSecureStorageProvider(
-          "storage/secure"
-        ),
+        secureStorageProvider: new FileSystemSecureStorageProvider("storage/secure"),
       });
     }
 
@@ -233,7 +242,8 @@ export class EmbeddedWalletManager {
     return EmbeddedWalletManager.ew.getTransaction(txId);
   };
 
-  getLatestTxs = async (): Promise<{
+  getLatestTxs = async (): Promise<
+    {
       id: string;
       operation: GetTransactionOperation;
       asset: string;
@@ -242,7 +252,8 @@ export class EmbeddedWalletManager {
       source: SourceTransferPeerPathResponse;
       destination: DestinationTransferPeerPathResponse;
       lastUpdated: string;
-  }[]> => {
+    }[]
+  > => {
     const [incoming, outgoing] = await Promise.all([
       EmbeddedWalletManager.ew.getTransactions({
         incoming: true,
@@ -257,7 +268,7 @@ export class EmbeddedWalletManager {
     ]);
     return [...incoming.data, ...outgoing.data]
       .sort((a, b) => (a.lastUpdated > b.lastUpdated ? -1 : 1))
-      .map((tx) => ({
+      .map(tx => ({
         id: tx.id,
         operation: tx.operation,
         asset: tx.assetId,
@@ -297,14 +308,14 @@ export class EmbeddedWalletManager {
         choices: ["incoming", "outgoing"],
       },
     ]);
-    const filter = {};
+    const filter = {} as IGetTransactionsParams;
     if (direction === "incoming") {
-      filter["incoming"] = true;
+      filter.incoming = true;
     }
     if (direction === "outgoing") {
-      filter["outgoing"] = true;
+      filter.outgoing = true;
     }
-    return EmbeddedWalletManager.ew.getTransactions(filter as any);
+    return EmbeddedWalletManager.ew.getTransactions(filter);
   };
 
   createTransactionByJsonInput = async (): Promise<TransactionResponse> => {
@@ -327,19 +338,17 @@ export class EmbeddedWalletManager {
         null,
         2
       ),
-      validate: (text) => {
+      validate: text => {
         try {
           JSON.parse(text);
           return true;
-        } catch (e) {
+        } catch {
           return "Invalid JSON. Please try again";
         }
       },
     });
 
-    return EmbeddedWalletManager.ew.createTransaction(
-      JSON.parse(txRequestJson)
-    );
+    return EmbeddedWalletManager.ew.createTransaction(JSON.parse(txRequestJson));
   };
 
   createTransaction = async (): Promise<CreateTransactionResponse> => {
@@ -378,7 +387,7 @@ export class EmbeddedWalletManager {
     let destination: DestinationTransferPeerPath;
 
     switch (destinationType) {
-      case "ONE_TIME_ADDRESS":
+      case "ONE_TIME_ADDRESS": {
         const destAddress = await inputAny("Destination Address");
         destination = {
           type: "ONE_TIME_ADDRESS",
@@ -387,7 +396,8 @@ export class EmbeddedWalletManager {
           },
         };
         break;
-      case "END_USER_WALLET":
+      }
+      case "END_USER_WALLET": {
         const destWalletId = await inputAny(
           "Destination Wallet ID",
           EmbeddedWalletManager.walletId
@@ -399,13 +409,15 @@ export class EmbeddedWalletManager {
           id: `${destAccountId}`,
         };
         break;
-      case "VAULT_ACCOUNT":
+      }
+      case "VAULT_ACCOUNT": {
         const vaultAccountId = await inputAny("Vault Account ID", "0");
         destination = {
           type: "VAULT_ACCOUNT",
           id: vaultAccountId,
         };
         break;
+      }
     }
 
     return destination;

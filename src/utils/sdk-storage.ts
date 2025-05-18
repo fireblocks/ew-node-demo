@@ -31,7 +31,7 @@ export class FileSystemStorageProvider implements IStorageProvider {
 
   async clear(key: string): Promise<void> {
     const filePath = path.join(this.storageDir, key);
-    await fs.unlink(filePath).catch((error) => {
+    await fs.unlink(filePath).catch(error => {
       if (error.code !== "ENOENT") {
         throw error;
       }

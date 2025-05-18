@@ -10,7 +10,7 @@ main().then(() => {
   process.exit(0);
 });
 
-process.on("uncaughtException", (error) => {
+process.on("uncaughtException", error => {
   if (error instanceof Error && error.name === "ExitPromptError") {
     // noop; silence this error
   } else {

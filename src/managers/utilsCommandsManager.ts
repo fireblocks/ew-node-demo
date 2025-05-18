@@ -27,13 +27,11 @@ export class UtilsManager {
     const claimKey = "wallet_claim"; // TODO: answers.claimKey
     const claimValue = await getCustomClaim(uid, claimKey);
     if (claimValue) {
-      console.log(
-        `Custom principal claim for user '${uid}': ${claimKey} = '${claimValue}'`
-      );
+      console.log(`Custom principal claim for user '${uid}': ${claimKey} = '${claimValue}'`);
     } else {
       console.log(`No custom principal claim found for user '${uid}'`);
     }
-  }
+  };
 
   setCustomPrincipalClaim = async () => {
     const answers = await inquirer.prompt([
@@ -72,8 +70,7 @@ export class UtilsManager {
         console.log("No saved wallet IDs found.");
         return;
       }
-      const getKey = (opt: { name: string; uuid: string }) =>
-        `${opt.name}: ${opt.uuid}`;
+      const getKey = (opt: { name: string; uuid: string }) => `${opt.name}: ${opt.uuid}`;
       const { walletId } = await inquirer.prompt([
         {
           type: "list",
@@ -82,7 +79,7 @@ export class UtilsManager {
           choices: opts.map(getKey),
         },
       ]);
-      claimValue = opts.find((opt) => getKey(opt) === walletId)?.uuid || "";
+      claimValue = opts.find(opt => getKey(opt) === walletId)?.uuid || "";
     }
     await setCustomClaim(
       answers.uid,
@@ -111,10 +108,8 @@ export class UtilsManager {
       throw "Must initialize both Embedded Wallet and Core NCW";
     }
 
-    const promises: Promise<any>[] = [
-      this.fetchAccountData(),
-      this.fetchKeysState(),
-    ];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const promises: Promise<any>[] = [this.fetchAccountData(), this.fetchKeysState()];
     if (!EmbeddedWalletManager.walletId) {
       promises.push(this.ewManager.assignWallet());
     }
@@ -134,12 +129,10 @@ export class UtilsManager {
 
     const accounts = await EmbeddedWalletManager.instance.getAccounts();
     await Promise.all(
-      accounts.data.map(async (account) => {
-        const accountAssets = await EmbeddedWalletManager.instance.getAssets(
-          account.accountId
-        );
+      accounts.data.map(async account => {
+        const accountAssets = await EmbeddedWalletManager.instance.getAssets(account.accountId);
         await Promise.all(
-          accountAssets.data.map(async (asset) => {
+          accountAssets.data.map(async asset => {
             const balance = await EmbeddedWalletManager.instance.getBalance(
               account.accountId,
               asset.id
@@ -169,9 +162,7 @@ export class UtilsManager {
     const instance = getFireblocksNCWInstance(CoreManager.deviceId);
     const [keyStatus, backup] = await Promise.all([
       instance.getKeysStatus(),
-      EmbeddedWalletManager.instance
-        .getLatestBackup()
-        .catch(() => ({ keys: [] })),
+      EmbeddedWalletManager.instance.getLatestBackup().catch(() => ({ keys: [] })),
     ]);
 
     for (const key of Object.values(keyStatus)) {
@@ -179,9 +170,7 @@ export class UtilsManager {
       keysState.push({
         keyId: key.keyId,
         status: key.keyStatus,
-        backup: backup.keys.some(
-          (backupKeys) => backupKeys.algorithm === algorithmWithoutCMP
-        ),
+        backup: backup.keys.some(backupKeys => backupKeys.algorithm === algorithmWithoutCMP),
         algorithm: algorithmWithoutCMP,
       });
     }

@@ -11,9 +11,7 @@ function loadEnvironmentConfig(envName?: string) {
 
   if (result.error) {
     console.error(
-      `Error loading ${envName} environment variables${
-        envPath ? ` from: ${envPath}` : ""
-      }:`,
+      `Error loading ${envName} environment variables${envPath ? ` from: ${envPath}` : ""}:`,
       result.error
     );
   } else {
