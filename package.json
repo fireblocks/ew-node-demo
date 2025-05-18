@@ -10,7 +10,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@fireblocks/embedded-wallet-sdk": "^0.0.22",
+    "@fireblocks/embedded-wallet-sdk": "^0.0.24",
     "@fireblocks/ncw-js-sdk": "^12.5.5",
     "chalk": "4.1.2",
     "dotenv": "^16.4.7",

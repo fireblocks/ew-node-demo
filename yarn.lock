@@ -96,12 +96,12 @@
   dependencies:
     tslib "^2.1.0"
 
-"@fireblocks/embedded-wallet-sdk@^0.0.22":
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/@fireblocks/embedded-wallet-sdk/-/embedded-wallet-sdk-0.0.22.tgz#11faf9ea38a7b11655140ff97b8d2882fe7057a7"
-  integrity sha512-bEAXEKTuBeD1n/Dt6p0OlAvPu9M7hCrDJY9Lu9jF7Ud9yIhnAlJ9R7YFbNmP6tAiVP02sSgOCb5j41DHDxC14g==
+"@fireblocks/embedded-wallet-sdk@^0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@fireblocks/embedded-wallet-sdk/-/embedded-wallet-sdk-0.0.24.tgz#94349c950faf50b41589186ff37647e22dd69dc1"
+  integrity sha512-DgC8twvt4vfDpl7TVSoWCPp+8Heja7uLeTR25Q77Vi7PPO1zVUwmPqiaq12r8JQxym1o/FVZL9zJe34swuCr8g==
   dependencies:
-    axios "^1.7.9"
+    axios "^1.9.0"
 
 "@fireblocks/ncw-js-infra@1.0.21":
   version "1.0.21"
@@ -785,10 +785,19 @@ axios@^1.6.0, axios@^1.7.7:
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
-axios@^1.6.7, axios@^1.7.9:
+axios@^1.6.7:
   version "1.7.9"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.9.tgz#d7d071380c132a24accda1b2cfc1535b79ec650a"
   integrity sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==
+  dependencies:
+    follow-redirects "^1.15.6"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
+
+axios@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.9.0.tgz#25534e3b72b54540077d33046f77e3b8d7081901"
+  integrity sha512-re4CqKTJaURpzbLHtIi6XpDv20/CnpXOtjRY5/CU32L8gU8ek9UIivcfvSWvmKEngmVbrUtPpdDwWDWL7DNHvg==
   dependencies:
     follow-redirects "^1.15.6"
     form-data "^4.0.0"

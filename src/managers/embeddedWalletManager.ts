@@ -1,4 +1,4 @@
-import { EmbeddedWallet } from "@fireblocks/embedded-wallet-sdk";
+import { EmbeddedWallet, IPaginatedResponse } from "@fireblocks/embedded-wallet-sdk";
 import {
   ConsoleLoggerFactory,
   generateDeviceId,
@@ -18,9 +18,10 @@ import {
   inputAccountAndAssetWithChoices,
   inputAny,
 } from "../utils/prompt-utils";
-import { DestinationTransferPeerPath } from "@fireblocks/ts-sdk";
+import { AmountInfo, CreateConnectionResponse, CreateTransactionResponse, DestinationTransferPeerPath, DestinationTransferPeerPathResponse, EstimatedTransactionFeeResponse, GetTransactionOperation, SessionDTO, SourceTransferPeerPathResponse, TokenOwnershipResponse, TokenResponse, TransactionResponse } from "@fireblocks/ts-sdk";
 import { CoreManager } from "./coreManager";
 import { ENV } from "../config";
+import { NCW } from "fireblocks-sdk";
 
 export class EmbeddedWalletManager {
   public static isInitialized: boolean = false;
@@ -125,42 +126,42 @@ export class EmbeddedWalletManager {
     return EmbeddedWalletManager.ew.getLatestBackup();
   };
 
-  getNFT = async () => {
+  getNFT = async (): Promise<TokenResponse> => {
     const id = await inputAny("NFT ID");
     return EmbeddedWalletManager.ew.getNFT({ id });
   };
 
-  getOwnedNFTs = async () => {
+  getOwnedNFTs = async (): Promise<IPaginatedResponse<TokenOwnershipResponse>> => {
     return EmbeddedWalletManager.ew.getOwnedNFTs();
   };
 
-  listOwnedCollections = async () => {
+  listOwnedCollections = async (): Promise<IPaginatedResponse<TokenOwnershipResponse>> => {
     return EmbeddedWalletManager.ew.listOwnedCollections();
   };
 
-  listOwnedAssets = async () => {
+  listOwnedAssets = async (): Promise<IPaginatedResponse<TokenOwnershipResponse>> => {
     return EmbeddedWalletManager.ew.listOwnedAssets();
   };
 
-  getSupportedAssets = async () => {
+  getSupportedAssets = async (): Promise<IPaginatedResponse<NCW.WalletAssetResponse>> => {
     return EmbeddedWalletManager.ew.getSupportedAssets();
   };
 
-  getAssets = async () => {
+  getAssets = async (): Promise<IPaginatedResponse<NCW.WalletAssetResponse>> => {
     const { accountId } = await input("accountId");
     return EmbeddedWalletManager.ew.getAssets(accountId);
   };
 
-  addAsset = async () => {
+  addAsset = async (): Promise<NCW.WalletAssetAddress> => {
     const { assetId, accountId } = await input("accountId", "assetId");
     return EmbeddedWalletManager.ew.addAsset(Number(accountId), assetId);
   };
 
-  getWeb3Connections = async () => {
+  getWeb3Connections = async (): Promise<IPaginatedResponse<SessionDTO>> => {
     return EmbeddedWalletManager.ew.getWeb3Connections();
   };
 
-  createWeb3Connection = async () => {
+  createWeb3Connection = async (): Promise<CreateConnectionResponse> => {
     const { accountId } = await input("accountId");
     const uri = await inputAny("uri");
     return EmbeddedWalletManager.ew.createWeb3Connection({
@@ -227,12 +228,21 @@ export class EmbeddedWalletManager {
     CoreManager.deviceId = deviceId;
   };
 
-  getTransaction = async () => {
+  getTransaction = async (): Promise<TransactionResponse> => {
     const txId = await inputAny("txId");
     return EmbeddedWalletManager.ew.getTransaction(txId);
   };
 
-  getLatestTxs = async () => {
+  getLatestTxs = async (): Promise<{
+      id: string;
+      operation: GetTransactionOperation;
+      asset: string;
+      amount: number | AmountInfo;
+      status: string;
+      source: SourceTransferPeerPathResponse;
+      destination: DestinationTransferPeerPathResponse;
+      lastUpdated: string;
+  }[]> => {
     const [incoming, outgoing] = await Promise.all([
       EmbeddedWalletManager.ew.getTransactions({
         incoming: true,
@@ -264,7 +274,7 @@ export class EmbeddedWalletManager {
     return EmbeddedWalletManager.ew.cancelTransaction(txId);
   };
 
-  estimateTransactionFee = async () => {
+  estimateTransactionFee = async (): Promise<EstimatedTransactionFeeResponse> => {
     const { assetId, accountId } = await inputAccountAndAssetWithChoices();
     const amount = await inputAny("amount");
     const destination = await this.promptDestination();
@@ -278,7 +288,7 @@ export class EmbeddedWalletManager {
     });
   };
 
-  getTransactions = async () => {
+  getTransactions = async (): Promise<IPaginatedResponse<TransactionResponse>> => {
     const { direction } = await inquirer.prompt([
       {
         type: "list",
@@ -297,7 +307,7 @@ export class EmbeddedWalletManager {
     return EmbeddedWalletManager.ew.getTransactions(filter as any);
   };
 
-  createTransactionByJsonInput = async () => {
+  createTransactionByJsonInput = async (): Promise<TransactionResponse> => {
     const { txRequestJson } = await inquirer.prompt({
       type: "editor",
       name: "txRequestJson",
@@ -332,7 +342,7 @@ export class EmbeddedWalletManager {
     );
   };
 
-  createTransaction = async () => {
+  createTransaction = async (): Promise<CreateTransactionResponse> => {
     const { assetId, accountId } = await inputAccountAndAssetWithChoices();
     const amount = await inputAny("amount");
     const destination = await this.promptDestination();
